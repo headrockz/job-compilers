@@ -3,6 +3,13 @@ public class LC {
     private Compiler compiler;
 
     public static void main(String[] args) {
-        System.out.println("Hello World");
+
+        if (new EsFile().checkOpenFile()){
+            new Error (Error.ERROR_FILE_NOT_FOUND);
+        } else {
+            new Compiler("exemplo.lc", "exemplo.asm");
+            System.out.println("Fim normal da execução");
+        }
+
     }
 }
