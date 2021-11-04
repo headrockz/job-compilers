@@ -85,10 +85,9 @@ public class LexicalAnalyzer {
                         }
                         // nao seja em string @ # ? ! % &
                         else  if (this.character != -1) {
-                            new ERROR (ERROR.ERROR_LEXEME_NOT_FOUND, this.line, "" + ((Character) this.character))
+                            new Error (Error.ERROR_LEXEME_NOT_FOUND, this.line, "" + ((Character) this.character))
                     }
                         break;
-
                     // letra ou _
                     case 1:
                         if (Character.isLetterOrDigit(this.character) || this.character == '_'){
@@ -167,7 +166,7 @@ public class LexicalAnalyzer {
                         } else if (this.character == -1) {
                             this.lexical_record = new LexicalRecord(this.character, "EOF");
                             current_state = final_state;
-                            new Error(Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
+                            new Error (Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
                                     "" + ((Character) this.character));
                         }
 

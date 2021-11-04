@@ -4,7 +4,7 @@ public class LC {
 
     public static void main(String[] args) {
 
-        if (new EsFile().checkOpenFile()){
+        if (new EsFile().checkOpenFile("exemplo.lc")){
             new Error (Error.ERROR_FILE_NOT_FOUND);
         } else {
             new Compiler("exemplo.lc", "exemplo.asm");

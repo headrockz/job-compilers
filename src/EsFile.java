@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.RandomAccess;
 
 public class EsFile {
     private String name_file_input;
@@ -9,11 +8,11 @@ public class EsFile {
     private RandomAccessFile input_file;
     private RandomAccessFile output_file;
 
-    public EsFile(String name_file_input) {
-        this.name_file_input = name_file_input;
+    public EsFile() {
     }
 
-    public EsFile() {
+    public EsFile(String name_file_input) {
+        this.name_file_input = name_file_input;
     }
 
     public void openFileInput(RandomAccessFile input_file){

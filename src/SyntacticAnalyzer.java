@@ -1,15 +1,15 @@
 public class SyntacticAnalyzer {
     private EsFile es_file;
-    private LexicalRecord lexical_record; //trocar nome
-    private SymbolTable symbol_table; //trocar nome
-    private LexicalAnalyzer lexical_analyzer; //trocar nome
+    private LexicalRecord lexical_record;
+    private SymbolTable symbol_table;
+    private LexicalAnalyzer lexical_analyzer;
 
     private  String lexeme;
     private Integer token_current;
 
     public  SyntacticAnalyzer() { }
 
-    public SyntacticAnalyzer(EsFile esfile, SymbolTable symbol_table, LexicalAnalyzer lexical_analyzer) {
+    public SyntacticAnalyzer(EsFile es_file, SymbolTable symbol_table, LexicalAnalyzer lexical_analyzer) {
         this.es_file = es_file;
         this.symbol_table = symbol_table;
         this.lexical_analyzer = lexical_analyzer;
@@ -19,14 +19,14 @@ public class SyntacticAnalyzer {
         this.lexeme = lexical_record.getLexeme();
 
         if (this.token_current == -1){
-            new Error(Error.ERROR_FINAL_FILE_NOT_EXPECTED, lexical_analyzer.getLine(),
+            new Error (Error.ERROR_FINAL_FILE_NOT_EXPECTED, lexical_analyzer.getLine(),
                     "" + this.token_current);
         }
 
         this.S();
 
         if (this.token_current != 1) {
-            new Error(Error.ERROR_FINAL_FILE_NOT_EXPECTED, lexical_analyzer.getLine(),
+            new Error (Error.ERROR_FINAL_FILE_NOT_EXPECTED, lexical_analyzer.getLine(),
                     "" + this.token_current);
         }
     }
