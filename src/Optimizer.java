@@ -1,11 +1,12 @@
 public class Optimizer {
-    private ES_File file;
+    private EsFile file;
 
     public Optimizer() {}
 
-    public Optimizer(ES_File file) {
+    public Optimizer(EsFile file) {
         this.file = file;
     }
+
     public String toString(){
         return null;
     }

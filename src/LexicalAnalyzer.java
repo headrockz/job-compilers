@@ -85,7 +85,7 @@ public class LexicalAnalyzer {
                         }
                         // nao seja em string @ # ? ! % &
                         else  if (this.character != -1) {
-                            new Error (Error.ERROR_LEXEME_NOT_FOUND, this.line, "" + ((Character) this.character))
+                            new Error (Error.ERROR_LEXEME_NOT_FOUND, this.line, "" + ((Character) this.character));
                     }
                         break;
                     // letra ou _
@@ -97,10 +97,10 @@ public class LexicalAnalyzer {
                         }
                         else if (!Character.isLetterOrDigit(this.character) && this.character != '_'
                                 && this.character != '\n') {
-                            this.lexical_record = new this.symbol_table.searchSymbol(this.lexeme);
+                            this.lexical_record = this.symbol_table.searchSymbol(this.lexeme);
                             if (this.lexical_record == null) {
                                 this.lexical_record = this.symbol_table.insertSymbol(this.lexeme,
-                                new LexicalRecord(this.symbol_table.getToken("id"), this.lexeme))
+                                new LexicalRecord(this.symbol_table.getToken("id"), this.lexeme));
                             }
                             es_file.giveBack(-1);
                             current_state = final_state;
