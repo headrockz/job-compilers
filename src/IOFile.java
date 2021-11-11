@@ -30,9 +30,7 @@ public class IOFile {
     public void openFileOutput(String output_file){
         this.name_file_output = output_file;
         try {
-            // TODO: 10/11/2021 não existe modo write byte
             this.output_file = new RandomAccessFile(new File(this.name_file_output), "rw");
-//            this.output_file = new RandomAccessFile(new File(this.name_file_output), "r");
         } catch (IOException e){
             new Error (Error.ERROR_OPEN_FILE);
         }

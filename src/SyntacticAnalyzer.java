@@ -15,7 +15,6 @@ public class SyntacticAnalyzer {
         this.lexical_analyzer = lexical_analyzer;
 
         this.lexical_register = lexical_analyzer.getLexicalRegister();
-        System.out.println(this.lexical_register.toString());
         this.token_current = this.lexical_register.getToken();
         this.lexeme = lexical_register.getLexeme();
 
