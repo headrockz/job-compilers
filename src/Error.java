@@ -1,5 +1,5 @@
 public class Error {
-    private Integer line;
+    private int line;
     private String massage;
     private String lexeme;
 
@@ -7,9 +7,10 @@ public class Error {
     public static final String ERROR_FILE_NOT_FOUND = "ERRO: Arquivo nao encontrado!";
     public static final String ERROR_OPEN_FILE = "ERRO: Abertura do arquivo!";
     public static final String ERROR_READ_FILE = "ERRO: Leitura do arquivo!";
-    public static final String ERROR_POINTER_OPEN_FILE = "ERRO: ";
+    public static final String ERROR_POINTER_OPEN_FILE = "ERRO: Ponteiro do arquivo de entrada!";
     public static final String ERROR_INVALID_CHARACTER = "ERRO: Caracter invalido!";
     public static final String ERROR_LEXEME_NOT_FOUND = "ERRO: Lexema nao identificado!";
+    public static final String HASH_EMPTY = "ERRO: Hash vazia!";
 
     public static final String ERROR_LA_TOKEN_NOT_RECONIZED = "ERRO AL: Token nao reconhecido!";
 
@@ -20,21 +21,21 @@ public class Error {
 
     public Error(String message){
         this.massage = message;
-        System.out.print(this.massage);
+//        System.out.print(this.massage);
         System.exit(0);
     }
 
     public Error(String massage, int line){
         this.massage = massage;
         this.line = line;
-        System.out.println(this.massage + "Linha: " + this.line);
+//        System.out.println(this.massage + "Linha: " + this.line);
     }
 
-    public Error(String massage, Integer line, String lexeme) {
+    public Error(String massage, int line, String lexeme) {
         this.line = line;
         this.massage = massage;
         this.lexeme = lexeme;
-        System.out.println(this.massage + "Linha: " + this.line + "Lexema: " + this.lexeme);
+        System.out.println(this.massage + " Linha: " + this.line + " Lexema: " + this.lexeme);
     }
 
     @Override

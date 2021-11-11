@@ -1,7 +1,7 @@
 public class Compiler {
-    private EsFile es_file;
-    private SymbolTable sysmbol_table;
-    private LexicalAnalyzer lexical_anayzer;
+    private IOFile io_file;
+    private SymbolTable symbol_table;
+    private LexicalAnalyzer lexical_analyzer;
     private SyntacticAnalyzer syntactic_analyzer;
     private Optimizer optimizer;
 
@@ -10,17 +10,24 @@ public class Compiler {
 
     public Compiler(String input_file, String output_file) {
 
-        es_file = new EsFile();
-        es_file.openFileInput(input_file);
-        es_file.openFileOutput(output_file);
+        this.io_file = new IOFile();
+        this.io_file.openFileInput(input_file);
+        this.io_file.openFileOutput(output_file);
 
-        sysmbol_table = new SymbolTable();
-        lexical_anayzer = new LexicalAnalyzer();
-        syntactic_analyzer = new SyntacticAnalyzer(es_file, sysmbol_table, lexical_anayzer);
-        optimizer = new Optimizer();
+        // TODO: 10/11/2021 apagar essa linha
+//        System.out.println(io_file.toString());
 
+        this.symbol_table = new SymbolTable();
+        this.lexical_analyzer = new LexicalAnalyzer(io_file, symbol_table);
+
+        // TODO: 10/11/2021 apagar essa linha
+//        System.out.println(symbol_table.toString());
+        this.syntactic_analyzer = new SyntacticAnalyzer(this.io_file, this.symbol_table, this.lexical_analyzer);
+
+        this.optimizer = new Optimizer();
     }
 
+    @Override
     public String toString(){
         return null;
     }

@@ -2,34 +2,39 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-public class EsFile {
+public class IOFile {
     private String name_file_input;
     private String name_file_output;
     private RandomAccessFile input_file;
     private RandomAccessFile output_file;
 
-    public EsFile() {
+    public IOFile() {
+
     }
 
-    public EsFile(String name_file_input) {
+    public IOFile(String name_file_input) {
         this.name_file_input = name_file_input;
     }
 
-    public void openFileInput(RandomAccessFile input_file){
+    // metodos implementados
+
+    public void openFileInput(String input_file){
         this.name_file_input = input_file;
         try {
-            this.name_file_input = new RandomAccessFile(new File(this.name_file_input), "r");
+            this.input_file = new RandomAccessFile(new File(this.name_file_input), "r");
         } catch (IOException e){
             new Error(Error.ERROR_OPEN_FILE);
         }
     }
 
-    public void openFileOutput(RandomAccessFile output_file){
+    public void openFileOutput(String output_file){
         this.name_file_output = output_file;
         try {
-            this.name_file_output = new RandomAccessFile(new File(this.name_file_output), "r");
+            // TODO: 10/11/2021 não existe modo write byte
+            this.output_file = new RandomAccessFile(new File(this.name_file_output), "rw");
+//            this.output_file = new RandomAccessFile(new File(this.name_file_output), "r");
         } catch (IOException e){
-            new Error(Error.ERROR_OPEN_FILE);
+            new Error (Error.ERROR_OPEN_FILE);
         }
     }
 
@@ -38,10 +43,20 @@ public class EsFile {
         try {
             character = this.input_file.read();
         } catch (IOException e) {
-            new Error(Error.ERROR_READ_FILE);
+            new Error (Error.ERROR_READ_FILE);
         }
         
         return (character);
+    }
+    public char readChar() {
+        int character = 0;
+        try {
+            character = this.input_file.read();
+        } catch (IOException e) {
+            new Error (Error.ERROR_READ_FILE);
+        }
+
+        return ((char) character);
     }
 
     public String readLine(){
@@ -61,7 +76,9 @@ public class EsFile {
         try {
             file = new File(input_file);
             error = file.exists();
-        } catch (IOException e) {
+
+        // @ TODO: 10/11/2021 olhar essa parte
+        } catch (Exception e) {
             new Error(Error.ERROR_OPEN_FILE);
         }
 

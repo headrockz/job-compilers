@@ -1,4 +1,4 @@
-public class LexicalRecord {
+public class LexicalRegister {
     private Integer token;
     private String lexeme;
 
@@ -6,18 +6,18 @@ public class LexicalRecord {
     private int classs;
     private int address;
 
-    public  LexicalRecord(){
+    public LexicalRegister(){
         this.token = 0;
         this.lexeme = "";
     }
 
-    public LexicalRecord(Integer token, String lexeme) {
+    public LexicalRegister(Integer token, String lexeme) {
         this.token = token;
         this.lexeme = lexeme;
     }
 
     public Integer getToken() {
-        return this.token;
+        return (this.token);
     }
 
     public void setToken(Integer token) {
@@ -25,15 +25,16 @@ public class LexicalRecord {
     }
 
     public String getLexeme() {
-        return this.lexeme;
+        return (this.lexeme);
     }
 
     public void setLexeme(String lexeme) {
         this.lexeme = lexeme;
     }
 
-
+    @Override
     public String toString(){
-        return null;
+        return ("Token: " + this.token + "\n" +
+                "Lexema: " + this.lexeme);
     }
 }

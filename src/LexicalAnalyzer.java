@@ -1,18 +1,18 @@
 public class LexicalAnalyzer {
-    private EsFile es_file;
-    private LexicalRecord lexical_record; // trocar nome
+    private IOFile io_file;
+    private LexicalRegister lexical_register; // trocar nome
     private SymbolTable symbol_table; // trocar nome
 
     private String lexeme;
-    private Integer character, line, current_state, final_state, size_lexeme;
+    private int character, line, current_state, final_state, size_lexeme;
     private char[] valid_character;
 
     public LexicalAnalyzer() { }
 
-    public LexicalAnalyzer(EsFile file, SymbolTable symbol_table) {
-        this.es_file = file;
+    public LexicalAnalyzer(IOFile file, SymbolTable symbol_table) {
+        this.io_file = file;
         this.symbol_table = symbol_table;
-        this.lexical_record = new LexicalRecord();
+        this.lexical_register = new LexicalRegister();
 
         line = 1;
 
@@ -21,23 +21,24 @@ public class LexicalAnalyzer {
 
     }
 
-    public LexicalRecord getLexicalRecord(){
-        this.lexical_record = null;
+    public LexicalRegister getLexicalRegister(){
+        this.lexical_register = null;
         this.lexeme = "";
         this.current_state = 0;
         this.final_state = 14;
         this.size_lexeme = 0;
+//        System.out.println(this.io_file.readChar());
 
         do {
-            this.character = es_file.readByte();
+            this.character = this.io_file.readByte();
 
             if (this.validCharacter(this.character)){
 
                 switch (current_state){
                     case 0:
-                        // se nao for quebra de linha ou espaco
+                        // se for quebra de linha ou espaco
                         if(this.character == ' ' || this.character == '\r' || this.character == '\n') {
-                            current_state = 0;
+                            this.current_state = 0;
                             if (this.character == '\n'){
                                 this.line++;
                             }
@@ -45,15 +46,15 @@ public class LexicalAnalyzer {
 
                         // letra ou _
                         if (Character.isLetter((this.character)) || this.character == '_'){
-                            this.lexeme = "" + ((Character) this.character);
+                            this.lexeme = "" + ((char) this.character);
                             this.size_lexeme = 1;
                             this.current_state = 1;
                         }
                         // digito 1-9
                         else if (Character.isDigit(this.character) && character != '0'){
-                            this.lexeme = + ((Character) this.character);
+                            this.lexeme = "" + ((char) this.character);
                             this.size_lexeme = 1;
-                            this.current_state = 3;
+                            this.current_state = 2;
                         }
                         // "
                         else if (this.character == '"'){
@@ -70,46 +71,61 @@ public class LexicalAnalyzer {
                         //  ( ) + - * ; ,
                         else if (this.character == '(' || this.character == ')' || this.character == '+' ||
                                 this.character == '-' || this.character == ';' || this.character == ',') {
-                            this.lexeme = "" + ((Character) this.character);
-                            this.lexical_record = (LexicalRecord) symbol_table.searchSymbol(this.lexeme);
-                            if(this.lexical_record == null){
-                                this.lexical_record = this.symbol_table.insertSymbol(
-                                        lexeme, new LexicalRecord(symbol_table.getToken(), this.lexeme));
+                            this.lexeme = "" + ((char) this.character);
+                            this.lexical_register = (LexicalRegister) symbol_table.searchSymbol(this.lexeme);
+
+                            if(this.lexical_register == null){
+                                // TODO: 10/11/2021 descomentar linha
+                                this.lexical_register = this.symbol_table.insertSymbol(
+                                        lexeme, new LexicalRegister(this.symbol_table.getToken("id"), this.lexeme));
                                 current_state = final_state;
                             }
                         }
                         // EOF
                         else if (this.character == -1){
-                            this.lexical_record = new LexicalRecord(this.character, "EOF");
+                            this.lexical_register = new LexicalRegister(this.character, "EOF");
                             current_state = final_state;
                         }
                         // nao seja em string @ # ? ! % &
-                        else  if (this.character != -1) {
-                            new Error (Error.ERROR_LEXEME_NOT_FOUND, this.line, "" + ((Character) this.character));
+                        else if (this.character != -1) {
+                            new Error (Error.ERROR_LEXEME_NOT_FOUND, this.line, "" + ((char) this.character));
                     }
                         break;
                     // letra ou _
                     case 1:
-                        if (Character.isLetterOrDigit(this.character) || this.character == '_'){
-                            this.lexeme += (Character) character;
+                        if (Character.isLetter(this.character) || this.character == '_'){
+                            this.lexeme += (char) character;
                             this.size_lexeme++;
-                            current_state = 1;
+
+                            System.out.println(this.lexeme);
                         }
-                        else if (!Character.isLetterOrDigit(this.character) && this.character != '_'
+                        else if (!Character.isLetter(this.character) && this.character != '_'
                                 && this.character != '\n') {
-                            this.lexical_record = this.symbol_table.searchSymbol(this.lexeme);
-                            if (this.lexical_record == null) {
-                                this.lexical_record = this.symbol_table.insertSymbol(this.lexeme,
-                                new LexicalRecord(this.symbol_table.getToken("id"), this.lexeme));
+                            this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
+                            if (this.lexical_register == null) {
+                                this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
+                                new LexicalRegister(this.symbol_table.getToken("id"), this.lexeme));
                             }
-                            es_file.giveBack(-1);
-                            current_state = final_state;
+                            io_file.giveBack(-1);
+                            this.current_state = this.final_state;
                         }
 
                         break;
                     // digito 1-9
                     case 2:
+                        if (Character.isDigit(this.character)){
+                            this.lexeme += (char) character;
+                            this.size_lexeme++;
 
+                        } else if (!Character.isLetterOrDigit(this.character) && this.character != '\n'){
+                            this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
+                            if (this.lexical_register == null) {
+                                this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
+                                        new LexicalRegister(this.symbol_table.getToken("const"), this.lexeme));
+                            }
+                            io_file.giveBack(-1);
+                            current_state = final_state;
+                        }
 
                         break;
                     //digito comecando de 0
@@ -127,6 +143,19 @@ public class LexicalAnalyzer {
                         break;
                     // string entre " "
                     case 6:
+                        if(this.character != '"'){
+                            this.lexeme += (char) character;
+                            this.size_lexeme++;
+                        } else if (this.character == '"') {
+                            this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
+                            if (this.lexical_register == null) {
+                                this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
+                                        new LexicalRegister(this.symbol_table.getToken("const"), this.lexeme));
+                            }
+
+                            io_file.giveBack(-1);
+                            current_state = final_state;
+                        }
 
                         break;
                     //
@@ -143,10 +172,26 @@ public class LexicalAnalyzer {
                         break;
                     // divisao ou comentarios /* */
                     case 10:
+                        //comentario
+                        if (this.character == '*'){
+                            this.current_state = 11;
+
+                        } else { //divisao
+
+                        }
 
                         break;
                     // comentarios /* */
                     case 11:
+                        if (this.character != '/' && this.character != '\r' &&
+                                this.character != '\n' && this.character != -1){
+                            current_state = 13;
+                        } else if (this.character == '/') {
+                            current_state = 0;
+                        } else if (this.character == '\n') {
+                            this.line++;
+                            current_state = 13;
+                        }
 
                         break;
                     //
@@ -157,44 +202,39 @@ public class LexicalAnalyzer {
                     case 13:
                         if (this.character != '}' && this.character != '\r' &&
                                 this.character != '\n' && this.character != -1){
-                            current_state = 13;
                         } else if (this.character == '}') {
                             current_state = 0;
                         } else if (this.character == '\n') {
                             this.line++;
-                            current_state = 13;
                         } else if (this.character == -1) {
-                            this.lexical_record = new LexicalRecord(this.character, "EOF");
+                            this.lexical_register = new LexicalRegister(this.character, "EOF");
                             current_state = final_state;
                             new Error (Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
-                                    "" + ((Character) this.character));
+                                    "" + ((char) this.character));
                         }
 
                         break;
                     //
                     default:
-                        new Error(Error.ERROR_LEXEME_NOT_FOUND, this.line, "" + ((Character) this.character));
-
-                // end switch
-                }
-
+                        new Error(Error.ERROR_LEXEME_NOT_FOUND, this.line, "" + ((char) this.character));
+                } // end switch
             } else {
-                new Error(Error.ERROR_INVALID_CHARACTER, this.getLine(), "" + ((Character) this.character));
+                new Error(Error.ERROR_INVALID_CHARACTER, this.getLine(), "" + ((char) this.character));
             }
         } while (this.character != -1 && current_state != final_state);
 
-        return (this.lexical_record);
+        return (this.lexical_register);
     }
 
     public Integer getLine() {
         return this.line;
     }
 
-    public Boolean validCharacter(Integer character){
+    public Boolean validCharacter(int character){
         boolean valid = false;
 
         for (int i = 0; i < valid_character.length; i++){
-            if (valid_character[i] == (Character) character) {
+            if (valid_character[i] == (char) character) {
                 valid = true;
                 i = valid_character.length;
             }

@@ -4,10 +4,10 @@ public class LC {
 
     public static void main(String[] args) {
 
-        if (new EsFile().checkOpenFile("exemplo.lc")){
+        if (new IOFile().checkOpenFile("../exemplo.l")){
             new Error (Error.ERROR_FILE_NOT_FOUND);
         } else {
-            new Compiler("exemplo.lc", "exemplo.asm");
+            new Compiler("exemplo.l", "exemplo.asm");
             System.out.println("Fim normal da execução");
         }
 

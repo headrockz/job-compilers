@@ -1,9 +1,9 @@
 public class Optimizer {
-    private EsFile file;
+    private IOFile file;
 
     public Optimizer() {}
 
-    public Optimizer(EsFile file) {
+    public Optimizer(IOFile file) {
         this.file = file;
     }
 

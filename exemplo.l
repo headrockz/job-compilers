@@ -8,13 +8,13 @@ final MAXITER=10;
 { Bloco Principal }
 
 begin
-  write,"Digite seu nome: ";
-  readln,nome;
+  write "Digite seu nome: ";
+  readln nome;
   naoTerminou=true;
   n=0;
   while naoTerminou begin
     writeln,"Ola' ",nome;
     n=n+1;
-    naoTerminou=n<MAXITER;
+    naoTerminou<=MAXITER;
   end
 end
