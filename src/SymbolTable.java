@@ -15,56 +15,69 @@ public class SymbolTable {
     }
 
     private void loadSymbolTable() {
+        // type:
+        // 0 -> type_boolean
+        // 1 -> type_byte
+        // 2 -> type_int
+        // 3 -> type_string
+        // class:
+        // 0 -> class_empty
+        // 1 -> class_var
+        // 2 -> class_const
+
         this.symbol_table = new String[][]
-                { // token, lexema, id, var, end
-                        {"1", "id"},
-                        {"2", "const"},
-                        {"3", "final"},
-                        {"4", "int"},
-                        {"5", "byte"},
-                        {"6", "string"},
-                        {"7", "while"},
-                        {"8", "if"},
-                        {"9", "else"},
-                        {"10", "and"},
-                        {"11", "or"},
-                        {"12", "not"},
-                        {"13", "=="},
-                        {"14", "="},
-                        {"15", "("},
-                        {"16", ")"},
-                        {"17", "<"},
-                        {"18", ">"},
-                        {"19", "<>"},
-                        {"20", ">="},
-                        {"21", "<="},
-                        {"22", ","},
-                        {"23", "+"},
-                        {"24", "-"},
-                        {"25", "*"},
-                        {"26", "/"},
-                        {"27", ";"},
-                        {"28", "begin"},
-                        {"29", "end"},
-                        {"30", "readln"},
-                        {"31", "write"},
-                        {"32", "writeln"},
-                        {"2", "true"},
-                        {"2", "false"},
-                        {"35", "boolean"},
+                { // token, lexeme, type, class, address
+                        {"1", "id", "", "", ""},
+                        {"2", "const", "", "", ""},
+                        {"3", "final", "", "", ""},
+                        {"4", "int", "", "", ""},
+                        {"5", "byte", "", "", ""},
+                        {"6", "string", "", "", ""},
+                        {"7", "while", "", "", ""},
+                        {"8", "if", "", "", ""},
+                        {"9", "else", "", "", ""},
+                        {"10", "and", "", "", ""},
+                        {"11", "or", "", "", ""},
+                        {"12", "not", "", "", ""},
+                        {"13", "==", "", "", ""},
+                        {"14", "=", "", "", ""},
+                        {"15", "(", "", "", ""},
+                        {"16", ")", "", "", ""},
+                        {"17", "<", "", "", ""},
+                        {"18", ">", "", "", ""},
+                        {"19", "<>", "", "", ""},
+                        {"20", ">=", "", "", ""},
+                        {"21", "<=", "", "", ""},
+                        {"22", ",", "", "", ""},
+                        {"23", "+", "", "", ""},
+                        {"24", "-", "", "", ""},
+                        {"25", "*", "", "", ""},
+                        {"26", "/", "", "", ""},
+                        {"27", ";", "", "", ""},
+                        {"28", "begin", "", "", ""},
+                        {"29", "end", "", "", ""},
+                        {"30", "readln", "", "", ""},
+                        {"31", "write", "", "", ""},
+                        {"32", "writeln", "", "", ""},
+                        {"2", "true", "", "", ""},
+                        {"2", "false", "", "", ""},
+                        {"35", "boolean", "", "", ""},
                 };
         for (int i = 0; i <symbol_table.length; i++){
             this.lexical_register = new LexicalRegister(
                     Integer.parseInt(this.symbol_table[i][0]),
                     this.symbol_table[i][1]
             );
+
             this.insertSymbol(symbol_table[i][1], lexical_register);
+//            this.insertSymbol(symbol_table[i][1], lexical_register, symbol_table[i][2], symbol_table[i][3]);
         }
     }
 
+//    public LexicalRegister insertSymbol(String lexeme, LexicalRegister lexical_register, String type, String clas) {
     public LexicalRegister insertSymbol(String lexeme, LexicalRegister lexical_register) {
         this.hash_table.put(lexeme, lexical_register);
-        // TODO: 10/11/2021 olhar isso aqui
+//        this.hash_table.put(lexeme, lexical_register, type, clas);
         return ((LexicalRegister) this.hash_table.get(lexeme));
     }
 
@@ -73,7 +86,7 @@ public class SymbolTable {
     }
 
     public LexicalRegister searchSymbol(String lexeme){
-        System.out.println((LexicalRegister) this.hash_table.get(lexeme));
+//        System.out.println((LexicalRegister) this.hash_table.get(lexeme));
         return ((LexicalRegister) this.hash_table.get(lexeme));
     }
 
@@ -85,6 +98,16 @@ public class SymbolTable {
     public String getLexeme(){
         return (null);
     }
+
+//    public String getClaas(String lexeme){
+//        int type = 0;
+//        if(!lexeme.isEmpty()){
+//
+//        }
+//
+//
+//        return ((String.valueOf(type));
+//    }
 
     public void displaysHashTable() {
         if (!hash_table.isEmpty()) {

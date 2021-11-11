@@ -11,6 +11,7 @@ public class Error {
     public static final String ERROR_INVALID_CHARACTER = "ERRO: Caracter invalido!";
     public static final String ERROR_LEXEME_NOT_FOUND = "ERRO: Lexema nao identificado!";
     public static final String HASH_EMPTY = "ERRO: Hash vazia!";
+    public static final String ERROR_ZERO_DIVISION = "ERRO: Nao existe divisao por 0!";
 
     public static final String ERROR_LA_TOKEN_NOT_RECONIZED = "ERRO AL: Token nao reconhecido!";
 
