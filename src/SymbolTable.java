@@ -29,6 +29,8 @@ public class SymbolTable {
                 { // token, lexeme, type, class, address
                         {"1", "id", "", "", ""},
                         {"2", "const", "", "", ""},
+                        {"2", "true", "", "", ""},
+                        {"2", "false", "", "", ""},
                         {"3", "final", "", "", ""},
                         {"4", "int", "", "", ""},
                         {"5", "byte", "", "", ""},
@@ -59,9 +61,7 @@ public class SymbolTable {
                         {"30", "readln", "", "", ""},
                         {"31", "write", "", "", ""},
                         {"32", "writeln", "", "", ""},
-                        {"2", "true", "", "", ""},
-                        {"2", "false", "", "", ""},
-                        {"35", "boolean", "", "", ""},
+                        {"33", "boolean", "", "", ""},
                 };
         for (int i = 0; i <symbol_table.length; i++){
             this.lexical_register = new LexicalRegister(
@@ -86,12 +86,12 @@ public class SymbolTable {
     }
 
     public LexicalRegister searchSymbol(String lexeme){
-//        System.out.println((LexicalRegister) this.hash_table.get(lexeme));
+        System.out.println((LexicalRegister) this.hash_table.get(lexeme));
         return ((LexicalRegister) this.hash_table.get(lexeme));
     }
 
     public Integer getToken(String lexeme){
-//        System.out.println(((LexicalRegister) hash_table.get(lexeme)).getToken());
+        System.out.println(((LexicalRegister) hash_table.get(lexeme)).getToken());
         return (((LexicalRegister) hash_table.get(lexeme)).getToken());
     }
 

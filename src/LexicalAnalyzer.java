@@ -16,8 +16,8 @@ public class LexicalAnalyzer {
 
         line = 1;
 
-        this.valid_character = new char[] {' ', '_', '.', ',', ';', '(', ')', '/',
-                '*', '+', '>', '<', '=', '\n', '{', '}', '\r'};
+        this.valid_character = new char[] {' ', '_', '.', ',', ';', ':', '(', ')', '/',
+                '*', '+', '>', '<', '=', '\n', '{', '}', '\r', '"', '\0'};
 
     }
 
@@ -60,19 +60,21 @@ public class LexicalAnalyzer {
                         }
                         // "
                         else if (this.character == '"'){
-                            current_state = 6;
+                            this.current_state = 6;
                         }
                         // /
                         else if (this.character == '/'){
-                            current_state = 10;
+                            this.lexeme += (char) character;
+                            this.current_state = 10;
                         }
                         // {
                         else if (this.character == '{'){
-                            current_state = 13;
+                            this.current_state = 13;
                         }
-                        //  ( ) + - * ; ,
+                        //  ( ) + - * ; , :
                         else if (this.character == '(' || this.character == ')' || this.character == '+' ||
-                                this.character == '-' || this.character == ';' || this.character == ',') {
+                                this.character == '-' || this.character == ';' || this.character == ','
+                                || this.character == ':') {
                             this.lexeme = "" + ((char) this.character);
                             this.lexical_register = (LexicalRegister) symbol_table.searchSymbol(this.lexeme);
 
@@ -119,7 +121,8 @@ public class LexicalAnalyzer {
                             this.size_lexeme++;
                             this.current_state = 2;
 
-                        } else if (this.character != '\n' || this.character != '\r' ||this.character != ' '){
+                        } else if (this.character != '\n' || this.character != '\r' ||
+                                this.character != ' ' || this.character == '\n'){
                             this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
                             if (this.lexical_register == null) {
 
@@ -163,8 +166,10 @@ public class LexicalAnalyzer {
                         } else if (this.character == '"') {
                             this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
                             if (this.lexical_register == null) {
+
                                 String type = "3";
                                 String classs = "2";
+
                                 this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
                                         new LexicalRegister(this.symbol_table.getToken("const"), this.lexeme));
                             }
@@ -193,6 +198,7 @@ public class LexicalAnalyzer {
                     case 10:
                         //comentario
                         if (this.character == '*'){
+                            this.lexeme = "";
                             this.current_state = 11;
 
                         } else { //divisao
@@ -200,15 +206,15 @@ public class LexicalAnalyzer {
 //                                if (this.character == 0){
 //                                    new Error(Error.ERROR_ZERO_DIVISION, this.line, "");
 //                                } else{
-//                                    this.current_state =0;
+//                                    this.current_state = 0;
 //                            }
                         }
 
                         break;
                     // comentarios /* */
                     case 11:
-                        if (this.character != '/' && this.character != '\r' &&
-                                this.character != '\n' && this.character != -1){
+                        if (this.character != '/' || this.character != '\r' ||
+                                this.character != '\n' || this.character != -1){
                             this.current_state = 11;
                         } else if (this.character == '/') {
                             this.current_state = 0;
@@ -250,7 +256,7 @@ public class LexicalAnalyzer {
         } while (this.character != -1 && current_state != final_state);
 
         symbol_table.displaysHashTable();
-        System.out.println(getLine());
+//        System.out.println(getLine());
 
         return (this.lexical_register);
     }
