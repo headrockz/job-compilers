@@ -86,12 +86,12 @@ public class SymbolTable {
     }
 
     public LexicalRegister searchSymbol(String lexeme){
-        System.out.println((LexicalRegister) this.hash_table.get(lexeme));
+//        System.out.println((LexicalRegister) this.hash_table.get(lexeme));
         return ((LexicalRegister) this.hash_table.get(lexeme));
     }
 
     public Integer getToken(String lexeme){
-        System.out.println(((LexicalRegister) hash_table.get(lexeme)).getToken());
+//        System.out.println(((LexicalRegister) hash_table.get(lexeme)).getToken());
         return (((LexicalRegister) hash_table.get(lexeme)).getToken());
     }
 
@@ -119,6 +119,12 @@ public class SymbolTable {
             }
         } else {
             new Error(Error.HASH_EMPTY);
+        }
+    }
+
+    public void itensHashTable() {
+        if (!hash_table.isEmpty()) {
+            System.out.println("A hash contem " + hash_table.size() + " elementos: ");
         }
     }
 
