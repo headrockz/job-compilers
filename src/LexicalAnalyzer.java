@@ -21,10 +21,9 @@ public class LexicalAnalyzer {
         this.lexical_register = new LexicalRegister();
 
         line = 1;
-        char a = 13;
         this.valid_character = new char[] {' ', '_', '.', ',', ';', ':', '(', ')', '/',
                 '*', '+', '>', '<', '=', '\n', '{', '}', '\r', '"', '\0', '\t', '@', '?',
-                '!', '|', '\u0000', '\uFFFF', '\uffff', '\\', '\u0013'};
+                '!', '|', '\u0000', '\uFFFF', '\uffff', '\\'};
 
     }
 
@@ -52,7 +51,7 @@ public class LexicalAnalyzer {
                     case 0:
                         this.test = "";
                         // se for quebra de linha ou espaco
-                        if(this.character == ' ' || this.character == '\r' || this.character == '\n' || this.character == a) {
+                        if(this.character == ' ' || this.character == '\r' || this.character == '\n') {
                             if (this.character == '\n'){
                                 this.line++;
                             }
@@ -334,9 +333,9 @@ public class LexicalAnalyzer {
                             this.current_state = 0;
                         } else if (this.character == '*') {
                             this.current_state = 12;
-                        } else if (this.character == '\n') {
+                        } else if (this.character == '\n' || this.character == '\r') {
                             this.line++;
-                            this.current_state = 0;
+                            this.current_state = 11;
                         }
 
                         if (debug){
@@ -346,7 +345,6 @@ public class LexicalAnalyzer {
                         if (tests){
                             this.test += (char) this.character;
                             System.out.println(this.test);
-                            this.test = "";
                         }
 
                         break;
@@ -364,9 +362,9 @@ public class LexicalAnalyzer {
                             this.test += (char) this.character;
                             this.current_state = 0;
                         } else if (this.character == '\n' || this.character == '\r') {
-//                            this.io_file.giveBack(-1);
-//                            this.line++;
-//                            this.current_state = 0;
+
+                            this.current_state = 11;
+                            this.line++;
                         }
 
                         if (debug){
@@ -376,7 +374,6 @@ public class LexicalAnalyzer {
                         if (tests){
                             this.test += (char) this.character;
                             System.out.println(this.test);
-                            this.test = "";
                         }
 
 
@@ -391,7 +388,7 @@ public class LexicalAnalyzer {
 
                         } else if (this.character == '}') {
                             this.current_state = 0;
-                        } else if (this.character == '\n') {
+                        } else if (this.character == '\n' || this.character == '\r') {
 //                            this.lexical_register = new LexicalRegister();
                             this.current_state = 13;
                             this.line++;
@@ -406,11 +403,6 @@ public class LexicalAnalyzer {
                             System.out.println("Estou no caso 13");
                         }
 
-                        if (tests){
-                            this.test += (char) this.character;
-                            System.out.println(this.test);
-
-                        }
 
                         break;
                     // caso default
