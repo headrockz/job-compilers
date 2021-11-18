@@ -17,54 +17,54 @@ public class SymbolTable {
     private void loadSymbolTable() {
         // type:
         // -1 -> type_reservado
-        // 0 -> type_boolean
-        // 1 -> type_byte
-        // 2 -> type_int
-        // 3 -> type_string
+        // 1 -> type_boolean
+        // 2 -> type_byte
+        // 3 -> type_int
+        // 4 -> type_string
         // class:
         // -1 -> class_reservado
-        // 0 -> class_empty
-        // 1 -> class_var
-        // 2 -> class_const
+        // 1 -> class_empty
+        // 2 -> class_var
+        // 3 -> class_const
         // address
 
         this.symbol_table = new String[][]
                 {      //token, lexeme, type, class, address
-                        {"1", "id", "", "", ""},
-                        {"2", "const", "", "", ""},
-                        {"2", "true", "", "", ""},
-                        {"2", "false", "", "", ""},
-                        {"3", "final", "", "", ""},
-                        {"4", "int", "", "", ""},
-                        {"5", "byte", "", "", ""},
-                        {"6", "string", "", "", ""},
-                        {"7", "while", "", "", ""},
-                        {"8", "if", "", "", ""},
-                        {"9", "else", "", "", ""},
-                        {"10", "and", "", "", ""},
-                        {"11", "or", "", "", ""},
-                        {"12", "not", "", "", ""},
-                        {"13", "==", "", "", ""},
-                        {"14", "=", "", "", ""},
-                        {"15", "(", "", "", ""},
-                        {"16", ")", "", "", ""},
-                        {"17", "<", "", "", ""},
-                        {"18", ">", "", "", ""},
-                        {"19", "<>", "", "", ""},
-                        {"20", ">=", "", "", ""},
-                        {"21", "<=", "", "", ""},
-                        {"22", ",", "", "", ""},
-                        {"23", "+", "", "", ""},
-                        {"24", "-", "", "", ""},
-                        {"25", "*", "", "", ""},
-                        {"26", "/", "", "", ""},
-                        {"27", ";", "", "", ""},
-                        {"28", "begin", "", "", ""},
-                        {"29", "end", "", "", ""},
-                        {"30", "readln", "", "", ""},
-                        {"31", "write", "", "", ""},
-                        {"32", "writeln", "", "", ""},
-                        {"33", "boolean", "", "", ""},
+                        {"1", "id", "-1", "1", ""},
+                        {"2", "const", "-1", "2", ""},
+                        {"2", "true", "1", "-1", ""},
+                        {"2", "false", "1", "-1", ""},
+                        {"3", "final", "-1", "2", ""},
+                        {"4", "int", "3", "-1", ""},
+                        {"5", "byte", "2", "", ""},
+                        {"6", "string", "4", "-1", ""},
+                        {"7", "while", "-1", "-1", ""},
+                        {"8", "if", "-1", "-1", ""},
+                        {"9", "else", "-1", "-1", ""},
+                        {"10", "and", "-1", "-1", ""},
+                        {"11", "or", "-1", "-1", ""},
+                        {"12", "not", "-1", "-1", ""},
+                        {"13", "==", "-1", "-1", ""},
+                        {"14", "=", "-1", "-1", ""},
+                        {"15", "(", "-1", "-1", ""},
+                        {"16", ")", "-1", "-1", ""},
+                        {"17", "<", "-1", "-1", ""},
+                        {"18", ">", "-1", "-1", ""},
+                        {"19", "<>", "-1", "-1", ""},
+                        {"20", ">=", "-1", "-1", ""},
+                        {"21", "<=", "-1", "-1", ""},
+                        {"22", ",", "-1", "-1", ""},
+                        {"23", "+", "-1", "-1", ""},
+                        {"24", "-", "-1", "-1", ""},
+                        {"25", "*", "-1", "-1", ""},
+                        {"26", "/", "-1", "-1", ""},
+                        {"27", ";", "-1", "-1", ""},
+                        {"28", "begin", "-1", "-1", ""},
+                        {"29", "end", "-1", "-1", ""},
+                        {"30", "readln", "-1", "-1", ""},
+                        {"31", "write", "-1", "-1", ""},
+                        {"32", "writeln", "-1", "-1", ""},
+                        {"33", "boolean", "1", "-1", ""},
                 };
         for (int i = 0; i <symbol_table.length; i++){
             this.lexical_register = new LexicalRegister(
@@ -102,15 +102,6 @@ public class SymbolTable {
         return (null);
     }
 
-//    public String getClaas(String lexeme){
-//        int type = 0;
-//        if(!lexeme.isEmpty()){
-//
-//        }
-//
-//
-//        return ((String.valueOf(type));
-//    }
 
     public void displaysHashTable() {
         if (!hash_table.isEmpty()) {
@@ -118,7 +109,8 @@ public class SymbolTable {
             for (Enumeration n = this.hash_table.keys(); n.hasMoreElements();){
 //                System.out.println(n.nextElement() + " " + this.hash_table.get(n.nextElement()));
                 LexicalRegister lr1 = (LexicalRegister) this.hash_table.get(n.nextElement());
-                System.out.println(lr1.getLexeme() + " (" + lr1.getToken() + ")");
+                System.out.println("Lexema: " + lr1.getLexeme() + " Token: " + lr1.getToken() +
+                        " Tipo: " + lr1.getType() + " Classe: " + lr1.getClasss());
             }
         } else {
             new Error(Error.HASH_EMPTY);
