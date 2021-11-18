@@ -25,10 +25,10 @@ public class SyntacticAnalyzer {
 
 //        this.S();
 
-        if (this.token_current != 1) {
-            new Error (Error.ERROR_FINAL_FILE_NOT_EXPECTED, lexical_analyzer.getLine(),
-                    "" + this.token_current);
-        }
+//        if (this.token_current != 1) {
+//            new Error (Error.ERROR_FINAL_FILE_NOT_EXPECTED, lexical_analyzer.getLine(),
+//                    "" + this.token_current);
+//        }
     }
 
     private void S(){

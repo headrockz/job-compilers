@@ -7,10 +7,11 @@ public class LexicalAnalyzer {
     private String test;
     private int character, line, current_state, final_state, size_lexeme;
     private char[] valid_character;
+    char a = 13;
 
     // TODO: 16/11/2021 debug
     private boolean debug = true;
-    private boolean tests = false;
+    private boolean tests = true;
 
     public LexicalAnalyzer() { }
 
@@ -20,9 +21,10 @@ public class LexicalAnalyzer {
         this.lexical_register = new LexicalRegister();
 
         line = 1;
-
+        char a = 13;
         this.valid_character = new char[] {' ', '_', '.', ',', ';', ':', '(', ')', '/',
-                '*', '+', '>', '<', '=', '\n', '{', '}', '\r', '"', '\0'};
+                '*', '+', '>', '<', '=', '\n', '{', '}', '\r', '"', '\0', '\t', '@', '?',
+                '!', '|', '\u0000', '\uFFFF', '\uffff', '\\', '\u0013'};
 
     }
 
@@ -48,8 +50,9 @@ public class LexicalAnalyzer {
 
                 switch (current_state){
                     case 0:
+                        this.test = "";
                         // se for quebra de linha ou espaco
-                        if(this.character == ' ' || this.character == '\r' || this.character == '\n') {
+                        if(this.character == ' ' || this.character == '\r' || this.character == '\n' || this.character == a) {
                             if (this.character == '\n'){
                                 this.line++;
                             }
@@ -236,17 +239,16 @@ public class LexicalAnalyzer {
                         break;
                     // string entre " "
                     case 6:
-                        if (this.character != '"' && this.character != -1) {
-
-                            if (this.character == '\n'){
-                                this.line++;
-                            }
+                        if (this.character != '"' && this.character != '\n' &&
+                                this.character != '\r' && this.character != -1) {
 
                             this.lexeme += (char) character;
                             this.size_lexeme++;
-//                            this.current_state = 6;
+                            this.current_state = 6;
 
+                        } else if (this.character == '\n' || this.character == '\r'){
 
+                        } else if (this.character == -1){
 
                         } else if (this.character == '"') {
                             this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
@@ -263,8 +265,7 @@ public class LexicalAnalyzer {
                                         new LexicalRegister(this.symbol_table.getToken("const"),
                                                 this.lexeme, Integer.parseInt(type), Integer.parseInt(classs)));
                             }
-                            this.io_file.giveBack(-1);
-//                            this.lexeme = "";
+
                             this.current_state = this.final_state;
                         }
 
@@ -297,12 +298,11 @@ public class LexicalAnalyzer {
                     case 10:
                         if (this.character == '*'){ //comentario
                             this.lexeme = "";
+                            this.current_state = 11;
 
                             if (tests){
                                 this.test += (char) this.character;
                             }
-
-                            this.current_state = 11;
 
                         } else { //divisao
                             if (Character.isDigit(this.character)){
@@ -318,61 +318,98 @@ public class LexicalAnalyzer {
                         }
 
                         if (debug){
-                            System.out.println("Estou no caso 0");
+                            System.out.println("Estou no caso 10");
                         }
 
                         break;
                     // comentarios /* */
                     case 11:
-                        if (this.character != '/' || this.character == '\r' ||
-                                this.character == '\n' || this.character == -1){
-
-                            if (tests){
-                                this.test += (char) this.character;
-                                System.out.println(this.test);
-                            }
+                        if (this.character != '*' && this.character == '\r' &&
+                                this.character == '\n' && this.character == -1){
 
                             this.current_state = 11;
-                        } else if (this.character == '/') {
+
+                        } else if (this.character == -1) {
+                            this.lexical_register = new LexicalRegister(this.character, "EOF");
                             this.current_state = 0;
+                        } else if (this.character == '*') {
+                            this.current_state = 12;
                         } else if (this.character == '\n') {
                             this.line++;
-                            this.current_state = this.final_state;
+                            this.current_state = 0;
                         }
 
                         if (debug){
                             System.out.println("Estou no caso 11");
                         }
 
+                        if (tests){
+                            this.test += (char) this.character;
+                            System.out.println(this.test);
+                            this.test = "";
+                        }
+
                         break;
-                    //
+                    // comentarios /* */
                     case 12:
+                        if (this.character != '/' && this.character == '\r' &&
+                                this.character == '\n' && this.character == -1){
+
+                            this.current_state = 11;
+
+                        } else if (this.character == -1) {
+                            this.lexical_register = new LexicalRegister(this.character, "EOF");
+                            this.current_state = this.final_state;
+                        } else if (this.character == '/') {
+                            this.test += (char) this.character;
+                            this.current_state = 0;
+                        } else if (this.character == '\n' || this.character == '\r') {
+//                            this.io_file.giveBack(-1);
+//                            this.line++;
+//                            this.current_state = 0;
+                        }
+
+                        if (debug){
+                            System.out.println("Estou no caso 12");
+                        }
+
+                        if (tests){
+                            this.test += (char) this.character;
+                            System.out.println(this.test);
+                            this.test = "";
+                        }
+
 
                         break;
                     // comentarios entre { }
                     case 13:
+                        System.out.println("");
                         if (this.character != '}' && this.character != '\r' &&
                                 this.character != '\n' && this.character != -1){
 
-                            if (tests){
-                            this.test += (char) this.character;
-                            System.out.println(this.test);
-                            }
-
                             this.current_state = 13;
+
                         } else if (this.character == '}') {
                             this.current_state = 0;
                         } else if (this.character == '\n') {
+//                            this.lexical_register = new LexicalRegister();
+                            this.current_state = 13;
                             this.line++;
                         } else if (this.character == -1) {
                             this.lexical_register = new LexicalRegister(this.character, "EOF");
-                            this.current_state = 0;
+                            this.current_state = this.final_state;
                             new Error (Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
                                     "" + ((char) this.character));
                         }
 
                         if (debug){
                             System.out.println("Estou no caso 13");
+                        }
+
+                        if (tests){
+                            this.test += (char) this.character;
+                            System.out.println(this.test);
+
                         }
 
                         break;

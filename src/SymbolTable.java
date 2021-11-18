@@ -16,17 +16,20 @@ public class SymbolTable {
 
     private void loadSymbolTable() {
         // type:
+        // -1 -> type_reservado
         // 0 -> type_boolean
         // 1 -> type_byte
         // 2 -> type_int
         // 3 -> type_string
         // class:
+        // -1 -> class_reservado
         // 0 -> class_empty
         // 1 -> class_var
         // 2 -> class_const
+        // address
 
         this.symbol_table = new String[][]
-                { // token, lexeme, type, class, address
+                {      //token, lexeme, type, class, address
                         {"1", "id", "", "", ""},
                         {"2", "const", "", "", ""},
                         {"2", "true", "", "", ""},
