@@ -4,14 +4,12 @@ public class LexicalAnalyzer {
     private SymbolTable symbol_table;
 
     private String lexeme;
-    private String test;
     private int character, line, current_state, final_state, size_lexeme;
     private char[] valid_character;
     char a = 13;
 
     // TODO: 16/11/2021 debug
     private boolean debug = true;
-    private boolean tests = true;
 
     public LexicalAnalyzer() { }
 
@@ -30,8 +28,6 @@ public class LexicalAnalyzer {
     public LexicalRegister getLexicalRegister(){
         this.lexical_register = null;
         this.lexeme = "";
-        // TODO: 16/11/2021 debug
-        this.test = "";
         this.current_state = 0;
         this.final_state = 14;
         this.size_lexeme = 0;
@@ -41,7 +37,7 @@ public class LexicalAnalyzer {
 
             // TODO: 16/11/2021 debug
             if (debug){
-//            System.out.println("lex: " + this.lexeme);
+                System.out.println("lexema: " + this.lexeme);
 //            System.out.println("char: " + (char) this.character);
             }
 
@@ -49,7 +45,11 @@ public class LexicalAnalyzer {
 
                 switch (current_state){
                     case 0:
-                        this.test = "";
+
+                        if (debug){
+                            System.out.println("Estou no caso 0");
+                        }
+
                         // se for quebra de linha ou espaco
                         if(this.character == ' ' || this.character == '\r' || this.character == '\n') {
                             if (this.character == '\n'){
@@ -57,7 +57,7 @@ public class LexicalAnalyzer {
                             }
                         }
                         // letra ou _
-                        if (Character.isLetter((this.character)) || this.character == '_'){
+                        else if (Character.isLetter((this.character)) || this.character == '_'){
                             this.lexeme = "" + (char) this.character;
                             this.size_lexeme = 1;
                             this.current_state = 1;
@@ -69,44 +69,54 @@ public class LexicalAnalyzer {
                             this.current_state = 2;
                         }
                         // digito comecando com 0
-                        else if (this.character == 0){
-                            this.lexeme += (char) this.character;
+                        else if (this.character == '0'){
+                            this.lexeme = "" + (char) this.character;
                             this.size_lexeme = 1;
                             this.current_state = 3;
                         }
                         // "
                         else if (this.character == '"'){
+                            this.lexeme = "";
                             this.current_state = 6;
                         }
-                        // /
-                        else if (this.character == '/'){
-                            this.lexeme = "" + (char) character;
-                            this.test += (char) character;
-                            this.size_lexeme = 1;
-                            this.current_state = 10;
-                        }
-                        // < > =
-                        else if (this.character == '<' || this.character == '>' || this.character == '='){
+                        // =
+                        else if (this.character == '='){
                             this.lexeme = "" + (char) character;
                             this.size_lexeme = 1;
                             this.current_state = 7;
                         }
+                        // >
+                        else if (this.character == '>' || this.character == '='){
+                            this.lexeme = "" + (char) character;
+                            this.size_lexeme = 1;
+                            this.current_state = 8;
+                        }
+                        // <
+                        else if (this.character == '<'){
+                            this.lexeme = "" + (char) character;
+                            this.size_lexeme = 1;
+                            this.current_state = 9;
+                        }
+                        // /
+                        else if (this.character == '/'){
+                            this.lexeme = "" + (char) character;
+                            this.size_lexeme = 1;
+                            this.current_state = 10;
+                        }
                         // {
                         else if (this.character == '{'){
-                            this.test = "" + (char) character;
                             this.current_state = 13;
                         }
                         //  ( ) + - * ; , :
                         else if (this.character == '(' || this.character == ')' || this.character == '+' ||
-                                this.character == '-' || this.character == ';' || this.character == ','
-                                || this.character == ':') {
+                                this.character == '-' || this.character == ';' || this.character == ',') {
                             this.lexeme = "" + ((char) this.character);
                             this.lexical_register = symbol_table.searchSymbol(this.lexeme);
 
                             if(this.lexical_register == null){
                                 this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
                                         new LexicalRegister(this.symbol_table.getToken("id"), this.lexeme));
-                                this.current_state = this.final_state;
+                                this.current_state = 0;
                             }
                         }
                         // EOF
@@ -119,10 +129,6 @@ public class LexicalAnalyzer {
                             new Error (Error.ERROR_LEXEME_NOT_FOUND, this.line, "" + ((char) this.character));
                         }
 
-                        if (debug){
-                            System.out.println("Estou no caso 0");
-                        }
-
                     break;
                     // letra ou _
                     case 1:
@@ -132,8 +138,8 @@ public class LexicalAnalyzer {
                             this.current_state = 1;
 
                         }
-                        else if (!Character.isLetterOrDigit(this.character) && this.character != '_'
-                                && this.character != '\n' || this.character != '\r' || this.character != ' ') {
+                        else if (!Character.isLetterOrDigit(this.character) || this.character != '_'
+                                && this.character != '\n' || this.character != '\r' || this.character != -1) {
                             this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
                             if (this.lexical_register == null) {
 
@@ -145,7 +151,7 @@ public class LexicalAnalyzer {
                                         Integer.parseInt(type), Integer.parseInt(classs)));
                             }
                             io_file.giveBack(-1);
-                            this.current_state = this.final_state;
+                            this.current_state = 0;
                         }
 
                         if (debug){
@@ -155,28 +161,30 @@ public class LexicalAnalyzer {
                         break;
                     // digito 1-9
                     case 2:
+                        System.out.println("");
+
                         if (Character.isDigit(this.character)){
                             this.lexeme += (char) this.character;
                             this.size_lexeme++;
                             this.current_state = 2;
 
-                        } else if (this.character != '\n' || this.character != '\r' ||
-                                this.character != ' ' || this.character == '\n'){
+                        } else if (this.character != '\n' && this.character != '\r' &&
+                                this.character != ' ' && this.character != -1){
                             this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
                             if (this.lexical_register == null) {
 
-                                String type;
-                                String classs = "2";
+                                int type;
+                                int classs = 2;
 
                                 if (Integer.parseInt(this.lexeme) >= -128 && Integer.parseInt(this.lexeme) <= 127) {
-                                    type = "1";
+                                    type = 1;
                                 } else {
-                                    type = "2";
+                                    type = 2;
                                 }
 
                                 this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
                                         new LexicalRegister(this.symbol_table.getToken("const"), this.lexeme,
-                                                Integer.parseInt(type), Integer.parseInt(classs)));
+                                                type, classs));
                             }
                             this.io_file.giveBack(-1);
                             this.current_state = 0;
@@ -184,6 +192,7 @@ public class LexicalAnalyzer {
 
                         if (debug){
                             System.out.println("Estou no caso 2");
+                            System.out.println("lexema: " + this.lexeme);
                         } else {
                             new Error(Error.ERROR_INVALID_SYNTAX, this.line);
                         }
@@ -191,139 +200,316 @@ public class LexicalAnalyzer {
                         break;
                     //digito comecando de 0
                     case 3:
+                        System.out.println("");
+
                         if (Character.isDigit(this.character)){ //decimal
                             this.lexeme = String.valueOf((char) this.character);
                             this.size_lexeme = 1;
                             this.current_state = 2;
-                        } else if (this.character == 'h'){ //hexadecimal
+                        } else if (this.character == 'h' || this.character == 'H'){ //hexadecimal
                             this.lexeme += (char) this.character;
                             this.size_lexeme++;
                             this.current_state = 4;
-                        } else if (this.character != '\n' || this.character != '\r' ||
-                                this.character != ' ' || this.character == '\n'){
+                        } else if(Character.isLetter(this.character) && this.character != 'h' && this.character != 'H'){
+                            this.current_state = this.final_state;
+                            new Error(Error.ERROR_INVALID_SYNTAX, this.line);
+                        } else if (this.character != '\n' || this.character != '\r' || this.character != -1){
                             this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
                             if (this.lexical_register == null) {
 
-                                String type = "1";
-                                String classs = "2";
-
+                                int type = 1;
+                                int classs = 2;
 
                                 this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
                                         new LexicalRegister(this.symbol_table.getToken("const"), this.lexeme,
-                                                Integer.parseInt(type), Integer.parseInt(classs)));
+                                                type, classs));
                             }
                             this.io_file.giveBack(-1);
-                            this.current_state = this.final_state;
-                        } else if(Character.isLetter(this.character) && this.character != 'h'){
-                            new Error(Error.ERROR_INVALID_SYNTAX, this.line);
+                            this.current_state = 0;
                         }
 
                         if (debug){
                             System.out.println("Estou no caso 3");
+                            System.out.println("lexema: " + this.lexeme);
                         }
 
                         break;
                     // hexadecimal
                     case 4:
+                        if (Character.isDigit(this.character) || this.character == 'A' ||
+                                this.character == 'B' || this.character == 'C' ||
+                                this.character == 'D' || this.character == 'E' || this.character == 'F') {
+                            this.lexeme += (char) this.character;
+                            this.size_lexeme++;
+                            this.current_state = 5;
+                        } else if (Character.isLetter(this.character) && !Character.isDigit(this.character) &&
+                                this.character == 'A' && this.character == 'B' && this.character == 'C' ||
+                                this.character == 'D' && this.character == 'E' && this.character == 'F'){
+                            this.current_state = this.final_state;
+                            new Error(Error.ERROR_INVALID_SYNTAX, this.line);
+                        }
+
+                        if (debug){
+                            System.out.println("Estou no caso 4");
+                            System.out.println("lexema: " + this.lexeme);
+                        }
 
                         break;
-                    //
+                    // hexadecimal
                     case 5:
+                        char hexa = (char) this.lexeme.charAt(2);
+
+                        if (this.size_lexeme <= 4) {
+                            if (Character.isDigit(this.character) || this.character == 'A' ||
+                                    this.character == 'B' || this.character == 'C' ||
+                                    this.character == 'D' || this.character == 'E' || this.character == 'F') {
+                                this.lexeme += (char) this.character;
+                                this.size_lexeme++;
+                                this.current_state = 5;
+                            } else if (this.character != '\n' || this.character != '\r' || this.character != -1){
+                                if (this.size_lexeme == 3){
+                                    this.lexeme = "0h0" + hexa;
+                                }
+                                this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
+                                if (this.lexical_register == null) {
+
+                                    int type = 1;
+                                    int classs = 2;
+
+                                    this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
+                                            new LexicalRegister(this.symbol_table.getToken("const"), this.lexeme,
+                                                    type, classs));
+                                }
+                                this.io_file.giveBack(-1);
+                                this.current_state = 0;
+                            }
+
+                        } else {
+                            new Error(Error.ERROR_HEXADECIMAL_SIZE_EXCEEDED, this.line);
+                            this.current_state = this.final_state;
+                        }
+
+                        if (debug){
+                            System.out.println("Estou no caso 5");
+                            System.out.println("lexema: " + this.lexeme);
+                        }
 
                         break;
                     // string entre " "
                     case 6:
                         System.out.println("");
-                        if (this.character != '"' && this.character != '\n' &&
-                                this.character != '\r' && this.character != -1) {
+                        if (this.size_lexeme <= 255) {
+                            if (this.character != '"' && this.character != '\n' &&
+                                    this.character != '\r' && this.character != -1) {
 
-                            this.lexeme += (char) character;
-                            this.size_lexeme++;
-                            this.current_state = 6;
+                                this.lexeme += (char) character;
+                                this.size_lexeme++;
+                                this.current_state = 6;
 
-                        } else if (this.character == '\n' || this.character == '\r'){
-                            new Error(Error.ERROR_INVALID_SYNTAX, this.line);
-                        } else if (this.character == -1){
-                            this.current_state = this.final_state;
-                            new Error (Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
-                                    "" + ((char) this.character));
-                        } else if (this.character == '"') {
-                            this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
+                            } else if (this.character == '\n' || this.character == '\r') {
+                                this.current_state = this.final_state;
+                                new Error(Error.ERROR_LINE_BREAK_UNEXPECTED, this.line);
+                            } else if (this.character == -1) {
+                                this.current_state = this.final_state;
+                                new Error(Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
+                                        "" + ((char) this.character));
+                            } else if (this.character == '"') {
+                                this.lexeme += "$";
+                                this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
 
-                            if (debug){
-                                System.out.println("pesquinando na tabela: " + this.symbol_table.searchSymbol(this.lexeme));
+                                if (debug) {
+                                    System.out.println("pesquinando na tabela: " + this.symbol_table.searchSymbol(this.lexeme));
+                                }
+
+                                if (this.lexical_register == null) {
+
+                                    int type = 4;
+                                    int classs = 2;
+
+                                    this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
+                                            new LexicalRegister(this.symbol_table.getToken("const"),
+                                                    this.lexeme, type, classs));
+                                }
+                                this.current_state = 0;
                             }
-                            if (this.lexical_register == null) {
-
-                                String type = "4";
-                                String classs = "2";
-
-                                this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
-                                        new LexicalRegister(this.symbol_table.getToken("const"),
-                                                this.lexeme, Integer.parseInt(type), Integer.parseInt(classs)));
-                            }
-
-                            this.current_state = 0;
-                            this.lexeme = "";
-
+                        } else {
+                            new Error(Error.ERROR_STRING_SIZE_EXCEEDED, this.getLine());
                         }
 
                         if (debug){
                             System.out.println("Estou no caso 6");
                         }
+
                         break;
-                    // < >
+                    // = ==
                     case 7:
-                        if (this.character == '>' || this.character == '='){
+                        if (this.character == '=') {
                             this.lexeme += (char) this.character;
                             this.size_lexeme++;
-                            this.current_state = 8;
-                        } else if (this.character == ' '){
-                            this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
-                            if (this.lexical_register == null){
+                            if (this.character != '\n' && this.character != '\r' && this.character != -1){
+                                this.lexical_register = symbol_table.searchSymbol(this.lexeme);
 
+                                if (debug) {
+                                    System.out.println("pesquinando na tabela: " + this.symbol_table.searchSymbol(this.lexeme));
+                                }
+
+                                if(this.lexical_register == null){
+                                    this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
+                                            new LexicalRegister(this.symbol_table.getToken("id"), this.lexeme));
+                                }
+                                io_file.giveBack(-1);
+                                this.current_state = 0;
                             }
-                        } else if (this.character == -1){
-                        this.current_state = this.final_state;
-                        new Error (Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
-                                "" + ((char) this.character));
-                        } else if(this.character == '\n' || this.character == '\r'){
-                            this.line++;
-                            new Error(Error.ERROR_INVALID_SYNTAX, this.line);
+                        } else if (this.character != '\n' && this.character != '\r' && this.character != -1){
+                            this.lexical_register = symbol_table.searchSymbol(this.lexeme);
+
+                            if (debug) {
+                                System.out.println("pesquinando na tabela: " + this.symbol_table.searchSymbol(this.lexeme));
+                            }
+
+                            if(this.lexical_register == null){
+                                this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
+                                        new LexicalRegister(this.symbol_table.getToken("id"), this.lexeme));
+                            }
+                            io_file.giveBack(-1);
+                            this.current_state = 0;
+                        }
+//                        else if (this.character == '\n' || this.character == '\r'){
+//                            this.current_state = this.final_state;
+//                            new Error(Error.ERROR_INVALID_SYNTAX, this.line);
+////                            this.lexical_register = new LexicalRegister();
+//                        } else if (this.character == -1) {
+//                            this.current_state = this.final_state;
+//                            new Error(Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
+//                                    "" + ((char) this.character));
+//                        }
+
+                        if (debug){
+                            System.out.println("Estou no caso 7");
+                            System.out.println("lexema: " + this.lexeme);
                         }
 
                         break;
-                    // <= >= <> ==
+                    // >  >=
                     case 8:
+                        if (this.character == '=') {
+                            this.lexeme += (char) this.character;
+                            this.size_lexeme++;
+                            if (this.character != '\n' && this.character != '\r' && this.character != -1){
+                                this.lexical_register = symbol_table.searchSymbol(this.lexeme);
+
+                                if (debug) {
+                                    System.out.println("pesquinando na tabela: " + this.symbol_table.searchSymbol(this.lexeme));
+                                }
+
+                                if(this.lexical_register == null){
+                                    this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
+                                            new LexicalRegister(this.symbol_table.getToken("id"), this.lexeme));
+
+                                }
+                                io_file.giveBack(-1);
+                                this.current_state = 0;
+                            }
+                        } else if (this.character != '\n' && this.character != '\r' && this.character != -1){
+                            this.lexical_register = symbol_table.searchSymbol(this.lexeme);
+
+                            if (debug) {
+                                System.out.println("pesquinando na tabela: " + this.symbol_table.searchSymbol(this.lexeme));
+                            }
+
+                            if(this.lexical_register == null){
+                                this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
+                                        new LexicalRegister(this.symbol_table.getToken("id"), this.lexeme));
+                            }
+                            io_file.giveBack(-1);
+                            this.current_state = 0;
+                        }
+//                        else if (this.character == '\n' || this.character == '\r'){
+//                            this.current_state = this.final_state;
+//                            new Error(Error.ERROR_LINE_BREAK_UNEXPECTED, this.line);
+//                        } else if (this.character == -1) {
+//                            this.current_state = this.final_state;
+//                            new Error(Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
+//                                    "" + ((char) this.character));
+//                        }
+
+                        if (debug){
+                            System.out.println("Estou no caso 8");
+                            System.out.println("lexema: " + this.lexeme);
+                        }
 
                         break;
-                    // soma subtracao multipicao
+                    // < <= <>
                     case 9:
-//                        if (this.character == '+'){
-//
+                        if (this.character == '>' || this.character == '=') {
+                            this.lexeme += (char) this.character;
+                            this.size_lexeme++;
+                            if (this.character != '\n' && this.character != '\r' && this.character != -1){
+                                this.lexical_register = symbol_table.searchSymbol(this.lexeme);
+
+                                if (debug) {
+                                    System.out.println("pesquinando na tabela: " + this.symbol_table.searchSymbol(this.lexeme));
+                                }
+
+                                if(this.lexical_register == null){
+                                    this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
+                                            new LexicalRegister(this.symbol_table.getToken("id"), this.lexeme));
+                                }
+                                io_file.giveBack(-1);
+                                this.current_state = 0;
+                            }
+                        } else if (this.character != '\n' && this.character != '\r' && this.character != -1){
+                            this.lexical_register = symbol_table.searchSymbol(this.lexeme);
+
+                            if (debug) {
+                                System.out.println("pesquinando na tabela: " + this.symbol_table.searchSymbol(this.lexeme));
+                            }
+
+                            if(this.lexical_register == null){
+                                this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
+                                        new LexicalRegister(this.symbol_table.getToken("id"), this.lexeme));
+                            }
+                            io_file.giveBack(-1);
+                            this.current_state = 0;
+
+                        }
+//                        else if (this.character == -1) {
+//                            this.current_state = this.final_state;
+//                            new Error(Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
+//                                    "" + ((char) this.character));
 //                        }
+//                        else if (this.character == '\n' || this.character == '\r'){
+//                            this.current_state = this.final_state;
+//                            new Error(Error.ERROR_LINE_BREAK_UNEXPECTED, this.line);
+//                        }
+
+                        if (debug){
+                            System.out.println("Estou no caso 9");
+                            System.out.println("lexema: " + this.lexeme);
+                        }
 
                         break;
                     // divisao ou comentarios /* */
                     case 10:
+                        System.out.println("");
+
                         if (this.character == '*'){ //comentario
                             this.lexeme = "";
                             this.current_state = 11;
-
-                            if (tests){
-                                this.test += (char) this.character;
-                            }
-
                         } else { //divisao
-                            if (Character.isDigit(this.character)){
-                                if (this.character == 0){
-                                    new Error(Error.ERROR_ZERO_DIVISION, this.line);
-                                } else if (this.character == '\n' || this.character == '\r'){
-                                    this.line++;
-                                    new Error(Error.ERROR_INVALID_SYNTAX, this.line);
-                                } else {
-                                    this.current_state = this.final_state;
+                             if (this.character != '\n' && this.character != '\r' && this.character != -1){
+                                this.lexical_register = symbol_table.searchSymbol(this.lexeme);
+
+                                if (debug) {
+                                    System.out.println("pesquinando na tabela: " + this.symbol_table.searchSymbol(this.lexeme));
                                 }
+
+                                if(this.lexical_register == null){
+                                    this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
+                                            new LexicalRegister(this.symbol_table.getToken("id"), this.lexeme));
+                                }
+                                io_file.giveBack(-1);
+                                this.current_state = 0;
                             }
                         }
 
@@ -334,8 +520,8 @@ public class LexicalAnalyzer {
                         break;
                     // comentarios /* */
                     case 11:
-                        if (this.character != '*' && this.character == '\r' &&
-                                this.character == '\n' && this.character == -1){
+                        if (this.character != '*' && this.character != '\r' &&
+                                this.character != '\n' && this.character != -1){
 
                             this.current_state = 11;
 
@@ -346,24 +532,21 @@ public class LexicalAnalyzer {
                         } else if (this.character == '*') {
                             this.current_state = 12;
                         } else if (this.character == '\n' || this.character == '\r') {
-                            this.line++;
                             this.current_state = 11;
+                            if (this.character == '\n'){
+                                this.line++;
+                            }
                         }
 
                         if (debug){
                             System.out.println("Estou no caso 11");
                         }
 
-                        if (tests){
-                            this.test += (char) this.character;
-                            System.out.println(this.test);
-                        }
-
                         break;
                     // comentarios /* */
                     case 12:
-                        if (this.character != '/' && this.character == '\r' &&
-                                this.character == '\n' && this.character == -1){
+                        if (this.character != '/' && this.character != '\r' &&
+                                this.character != '\n' && this.character != -1){
 
                             this.current_state = 11;
 
@@ -372,10 +555,8 @@ public class LexicalAnalyzer {
                             new Error (Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
                                     "" + ((char) this.character));
                         } else if (this.character == '/') {
-                            this.test += (char) this.character;
                             this.current_state = 0;
-                        } else if (this.character == '\n' || this.character == '\r') {
-
+                        } else if (this.character == '\n') {
                             this.current_state = 11;
                             this.line++;
                         }
@@ -383,12 +564,6 @@ public class LexicalAnalyzer {
                         if (debug){
                             System.out.println("Estou no caso 12");
                         }
-
-                        if (tests){
-                            this.test += (char) this.character;
-                            System.out.println(this.test);
-                        }
-
 
                         break;
                     // comentarios entre { }
@@ -400,7 +575,7 @@ public class LexicalAnalyzer {
 
                         } else if (this.character == '}') {
                             this.current_state = 0;
-                        } else if (this.character == '\n' || this.character == '\r') {
+                        } else if (this.character == '\n') {
                             this.current_state = 13;
                             this.line++;
                         } else if (this.character == -1) {
@@ -414,11 +589,6 @@ public class LexicalAnalyzer {
                             System.out.println("Estou no caso 13");
                         }
 
-                        if (tests){
-                            this.test += (char) this.character;
-                            System.out.println(this.test);
-                        }
-
                         break;
                     // caso default
                     default:
@@ -429,18 +599,13 @@ public class LexicalAnalyzer {
                 new Error(Error.ERROR_INVALID_CHARACTER, this.getLine(), "" + ((char) this.character));
             }
 
-            if (debug){
-                System.out.println("lexema: " + this.lexeme);
-            }
-
         } while (this.character != -1 && current_state != final_state);
 
         // TODO: 16/11/2021 debug
         if (debug){
-            symbol_table.displaysHashTable();
+//            symbol_table.displaysHashTable();
 //            symbol_table.itensHashTable();
 //            System.out.println("linha: " + getLine());
-//            System.out.println("lexema: " + this.lexeme);
         }
 
         return (this.lexical_register);

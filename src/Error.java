@@ -12,8 +12,11 @@ public class Error {
     public static final String ERROR_LEXEME_NOT_FOUND = "ERRO: Lexema nao identificado!";
     public static final String HASH_EMPTY = "ERRO: Hash vazia!";
     public static final String ERROR_ZERO_DIVISION = "ERRO: Nao existe divisao por 0!";
-    public static final String ERROR_INVALID_SYNTAX = "ERRO: sintaxe invalida!";
 
+    public static final String ERROR_INVALID_SYNTAX = "ERRO AL: sintaxe invalida!";
+    public static final String ERROR_LINE_BREAK_UNEXPECTED = "ERRO AL: Quebra de linha nao esperada!";
+    public static final String ERROR_STRING_SIZE_EXCEEDED = "ERRO AL: Tamanho da String excedido!";
+    public static final String ERROR_HEXADECIMAL_SIZE_EXCEEDED = "ERRO AL: Tamanho do hexadecimal excedido!";
     public static final String ERROR_LA_TOKEN_NOT_RECONIZED = "ERRO AL: Token nao reconhecido!";
 
     public static final String ERROR_TOKEN_NOT_EXPECTED = "ERRO AS: Token nao esperado!";
@@ -30,7 +33,8 @@ public class Error {
     public Error(String massage, int line){
         this.massage = massage;
         this.line = line;
-//        System.out.println(this.massage + "Linha: " + this.line);
+        System.out.println(this.massage + " Linha: " + this.line);
+        System.exit(0);
     }
 
     public Error(String massage, int line, String lexeme) {
@@ -38,6 +42,7 @@ public class Error {
         this.massage = massage;
         this.lexeme = lexeme;
         System.out.println(this.massage + " Linha: " + this.line + " Lexema: " + this.lexeme);
+        System.exit(0);
     }
 
     @Override

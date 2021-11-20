@@ -16,13 +16,13 @@ public class SymbolTable {
 
     private void loadSymbolTable() {
         // type:
-        // -1 -> type_reservado
+        // -1 -> type_reserved
         // 1 -> type_boolean
         // 2 -> type_byte
         // 3 -> type_int
         // 4 -> type_string
         // class:
-        // -1 -> class_reservado
+        // -1 -> class_reserved
         // 1 -> class_empty
         // 2 -> class_var
         // 3 -> class_const

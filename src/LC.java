@@ -4,10 +4,10 @@ public class LC {
 
     public static void main(String[] args) {
 
-        if (new IOFile().checkOpenFile("tests/comments.l")){
+        if (new IOFile().checkOpenFile("tests/commens.l")){
             new Error (Error.ERROR_FILE_NOT_FOUND);
         } else {
-            new Compiler("tests/strings.l", "exemplo.asm");
+            new Compiler("tests/numbers.l", "exemplo.asm");
             System.out.println("Fim normal da execução");
         }
     }
