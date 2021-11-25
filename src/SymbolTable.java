@@ -36,7 +36,7 @@ public class SymbolTable {
                         {"2", "false", "1", "-1", ""},
                         {"3", "final", "-1", "2", ""},
                         {"4", "int", "3", "-1", ""},
-                        {"5", "byte", "2", "", ""},
+                        {"5", "byte", "2", "-1", ""},
                         {"6", "string", "4", "-1", ""},
                         {"7", "while", "-1", "-1", ""},
                         {"8", "if", "-1", "-1", ""},
@@ -69,18 +69,17 @@ public class SymbolTable {
         for (int i = 0; i <symbol_table.length; i++){
             this.lexical_register = new LexicalRegister(
                     Integer.parseInt(this.symbol_table[i][0]),
-                    this.symbol_table[i][1]
+                    this.symbol_table[i][1],
+                    Integer.parseInt(this.symbol_table[i][2]),
+                    Integer.parseInt(this.symbol_table[i][3])
             );
 
             this.insertSymbol(symbol_table[i][1], lexical_register);
-//            this.insertSymbol(symbol_table[i][1], lexical_register, symbol_table[i][2], symbol_table[i][3]);
         }
     }
 
-//    public LexicalRegister insertSymbol(String lexeme, LexicalRegister lexical_register, String type, String clas) {
     public LexicalRegister insertSymbol(String lexeme, LexicalRegister lexical_register) {
         this.hash_table.put(lexeme, lexical_register);
-//        this.hash_table.put(lexeme, lexical_register, type, clas);
         return ((LexicalRegister) this.hash_table.get(lexeme));
     }
 
@@ -89,7 +88,6 @@ public class SymbolTable {
     }
 
     public LexicalRegister searchSymbol(String lexeme){
-//        System.out.println((LexicalRegister) this.hash_table.get(lexeme));
         return ((LexicalRegister) this.hash_table.get(lexeme));
     }
 
@@ -98,8 +96,34 @@ public class SymbolTable {
         return (((LexicalRegister) hash_table.get(lexeme)).getToken());
     }
 
-    public String getLexeme(){
-        return (null);
+    public Integer getType(String s_type){
+        int type = -1;
+
+        if (s_type.equals("byte")){
+            type = 1;
+        } else if (s_type.equals("int")){
+            type = 2;
+        } else if (s_type.equals("boolean")) {
+            type = 3;
+        } else if ((s_type.equals("string"))){
+            type = 4;
+        }
+
+        return (type);
+    }
+
+    public Integer getClass(String s_class){
+        int classs = -1;
+
+        if (s_class.equals("empty")){
+            classs = 1;
+        } else if (s_class.equals("var")){
+            classs = 2;
+        } else if (s_class.equals("const")) {
+            classs = 3;
+        }
+
+        return (classs);
     }
 
 

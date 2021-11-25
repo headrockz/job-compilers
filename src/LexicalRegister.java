@@ -14,6 +14,8 @@ public class LexicalRegister {
     public LexicalRegister(Integer token, String lexeme) {
         this.token = token;
         this.lexeme = lexeme;
+        this.type = -1;
+        this.classs = -1;
     }
 
     public LexicalRegister(Integer token, String lexeme, int type, int classs) {
@@ -66,6 +68,8 @@ public class LexicalRegister {
     @Override
     public String toString(){
         return ("Token: " + this.token + "\n" +
-                "Lexema: " + this.lexeme);
+                "Lexema: " + this.lexeme + "\n" +
+                "Tipo: " + this.type + "\n" +
+                "Class: " + this.classs);
     }
 }

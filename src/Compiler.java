@@ -14,13 +14,8 @@ public class Compiler {
         this.io_file.openFileInput(input_file);
         this.io_file.openFileOutput(output_file);
 
-        // TODO: 10/11/2021 apagar essa linha
-//        System.out.println(io_file.toString());
-
         this.symbol_table = new SymbolTable();
         this.lexical_analyzer = new LexicalAnalyzer(io_file, symbol_table);
-        // TODO: 10/11/2021 apagar essa linha
-//        System.out.println(symbol_table.toString());
         this.syntactic_analyzer = new SyntacticAnalyzer(this.io_file, this.symbol_table, this.lexical_analyzer);
 
 

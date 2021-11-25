@@ -26,6 +26,7 @@ public class LexicalAnalyzer {
     }
 
     public LexicalRegister getLexicalRegister(){
+        String test = "";
         this.lexical_register = null;
         this.lexeme = "";
         this.current_state = 0;
@@ -37,7 +38,7 @@ public class LexicalAnalyzer {
 
             // TODO: 16/11/2021 debug
             if (debug){
-                System.out.println("lexema: " + this.lexeme);
+                test += "" + (char) this.character;
 //            System.out.println("char: " + (char) this.character);
             }
 
@@ -141,17 +142,19 @@ public class LexicalAnalyzer {
                         else if (!Character.isLetterOrDigit(this.character) || this.character != '_'
                                 && this.character != '\n' || this.character != '\r' || this.character != -1) {
                             this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
+
+                            if (debug) {
+                                System.out.println("pesquinando na tabela: " + this.symbol_table.searchSymbol(this.lexeme));
+                            }
+
                             if (this.lexical_register == null) {
 
-                                String type = "3";
-                                String classs = "2";
-
                                 this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
-                                new LexicalRegister(this.symbol_table.getToken("id"), this.lexeme,
-                                        Integer.parseInt(type), Integer.parseInt(classs)));
+                                new LexicalRegister(this.symbol_table.getToken("id"), this.lexeme));
                             }
+
                             io_file.giveBack(-1);
-                            this.current_state = 0;
+                            this.current_state = this.final_state;
                         }
 
                         if (debug){
@@ -173,13 +176,13 @@ public class LexicalAnalyzer {
                             this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
                             if (this.lexical_register == null) {
 
-                                int type;
-                                int classs = 2;
+                                int type= 0;
+                                int classs = 3;
 
                                 if (Integer.parseInt(this.lexeme) >= -128 && Integer.parseInt(this.lexeme) <= 127) {
-                                    type = 1;
-                                } else {
                                     type = 2;
+                                } else {
+                                    type = 3;
                                 }
 
                                 this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
@@ -187,14 +190,20 @@ public class LexicalAnalyzer {
                                                 type, classs));
                             }
                             this.io_file.giveBack(-1);
-                            this.current_state = 0;
+                            this.current_state = this.final_state;
+
+                        } else if (this.character == '\n' || this.character == '\r'){
+                            this.current_state = this.final_state;
+                            new Error(Error.ERROR_INVALID_SYNTAX, this.line);
+                        } else if (this.character == -1) {
+                            this.current_state = this.final_state;
+                            new Error(Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
+                                    "" + ((char) this.character));
                         }
 
                         if (debug){
                             System.out.println("Estou no caso 2");
                             System.out.println("lexema: " + this.lexeme);
-                        } else {
-                            new Error(Error.ERROR_INVALID_SYNTAX, this.line);
                         }
 
                         break;
@@ -217,8 +226,8 @@ public class LexicalAnalyzer {
                             this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
                             if (this.lexical_register == null) {
 
-                                int type = 1;
-                                int classs = 2;
+                                int type = 2;
+                                int classs = 3;
 
                                 this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
                                         new LexicalRegister(this.symbol_table.getToken("const"), this.lexeme,
@@ -226,6 +235,13 @@ public class LexicalAnalyzer {
                             }
                             this.io_file.giveBack(-1);
                             this.current_state = 0;
+                        } else if (this.character == '\n' || this.character == '\r'){
+                            this.current_state = this.final_state;
+                            new Error(Error.ERROR_INVALID_SYNTAX, this.line);
+                        } else if (this.character == -1) {
+                            this.current_state = this.final_state;
+                            new Error(Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
+                                    "" + ((char) this.character));
                         }
 
                         if (debug){
@@ -273,12 +289,8 @@ public class LexicalAnalyzer {
                                 this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
                                 if (this.lexical_register == null) {
 
-                                    int type = 1;
-                                    int classs = 2;
-
                                     this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
-                                            new LexicalRegister(this.symbol_table.getToken("const"), this.lexeme,
-                                                    type, classs));
+                                            new LexicalRegister(this.symbol_table.getToken("const"), this.lexeme));
                                 }
                                 this.io_file.giveBack(-1);
                                 this.current_state = 0;
@@ -323,14 +335,11 @@ public class LexicalAnalyzer {
 
                                 if (this.lexical_register == null) {
 
-                                    int type = 4;
-                                    int classs = 2;
-
                                     this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
                                             new LexicalRegister(this.symbol_table.getToken("const"),
-                                                    this.lexeme, type, classs));
+                                                    this.lexeme));
                                 }
-                                this.current_state = 0;
+                                this.current_state = this.final_state;
                             }
                         } else {
                             new Error(Error.ERROR_STRING_SIZE_EXCEEDED, this.getLine());
@@ -338,6 +347,7 @@ public class LexicalAnalyzer {
 
                         if (debug){
                             System.out.println("Estou no caso 6");
+                            System.out.println("lexema: " + this.lexeme);
                         }
 
                         break;
@@ -358,7 +368,7 @@ public class LexicalAnalyzer {
                                             new LexicalRegister(this.symbol_table.getToken("id"), this.lexeme));
                                 }
                                 io_file.giveBack(-1);
-                                this.current_state = 0;
+                                this.current_state = this.final_state;
                             }
                         } else if (this.character != '\n' && this.character != '\r' && this.character != -1){
                             this.lexical_register = symbol_table.searchSymbol(this.lexeme);
@@ -372,17 +382,16 @@ public class LexicalAnalyzer {
                                         new LexicalRegister(this.symbol_table.getToken("id"), this.lexeme));
                             }
                             io_file.giveBack(-1);
-                            this.current_state = 0;
+                            this.current_state = this.final_state;
                         }
-//                        else if (this.character == '\n' || this.character == '\r'){
-//                            this.current_state = this.final_state;
-//                            new Error(Error.ERROR_INVALID_SYNTAX, this.line);
-////                            this.lexical_register = new LexicalRegister();
-//                        } else if (this.character == -1) {
-//                            this.current_state = this.final_state;
-//                            new Error(Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
-//                                    "" + ((char) this.character));
-//                        }
+                        else if (this.character == '\n' || this.character == '\r'){
+                            this.current_state = this.final_state;
+                            new Error(Error.ERROR_INVALID_SYNTAX, this.line);
+                        } else if (this.character == -1) {
+                            this.current_state = this.final_state;
+                            new Error(Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
+                                    "" + ((char) this.character));
+                        }
 
                         if (debug){
                             System.out.println("Estou no caso 7");
@@ -408,7 +417,7 @@ public class LexicalAnalyzer {
 
                                 }
                                 io_file.giveBack(-1);
-                                this.current_state = 0;
+                                this.current_state = this.final_state;
                             }
                         } else if (this.character != '\n' && this.character != '\r' && this.character != -1){
                             this.lexical_register = symbol_table.searchSymbol(this.lexeme);
@@ -422,16 +431,16 @@ public class LexicalAnalyzer {
                                         new LexicalRegister(this.symbol_table.getToken("id"), this.lexeme));
                             }
                             io_file.giveBack(-1);
-                            this.current_state = 0;
+                            this.current_state = this.final_state;
                         }
-//                        else if (this.character == '\n' || this.character == '\r'){
-//                            this.current_state = this.final_state;
-//                            new Error(Error.ERROR_LINE_BREAK_UNEXPECTED, this.line);
-//                        } else if (this.character == -1) {
-//                            this.current_state = this.final_state;
-//                            new Error(Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
-//                                    "" + ((char) this.character));
-//                        }
+                        else if (this.character == '\n' || this.character == '\r'){
+                            this.current_state = this.final_state;
+                            new Error(Error.ERROR_LINE_BREAK_UNEXPECTED, this.line);
+                        } else if (this.character == -1) {
+                            this.current_state = this.final_state;
+                            new Error(Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
+                                    "" + ((char) this.character));
+                        }
 
                         if (debug){
                             System.out.println("Estou no caso 8");
@@ -456,7 +465,7 @@ public class LexicalAnalyzer {
                                             new LexicalRegister(this.symbol_table.getToken("id"), this.lexeme));
                                 }
                                 io_file.giveBack(-1);
-                                this.current_state = 0;
+                                this.current_state = this.final_state;
                             }
                         } else if (this.character != '\n' && this.character != '\r' && this.character != -1){
                             this.lexical_register = symbol_table.searchSymbol(this.lexeme);
@@ -470,18 +479,18 @@ public class LexicalAnalyzer {
                                         new LexicalRegister(this.symbol_table.getToken("id"), this.lexeme));
                             }
                             io_file.giveBack(-1);
-                            this.current_state = 0;
+                            this.current_state = this.final_state;
 
                         }
-//                        else if (this.character == -1) {
-//                            this.current_state = this.final_state;
-//                            new Error(Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
-//                                    "" + ((char) this.character));
-//                        }
-//                        else if (this.character == '\n' || this.character == '\r'){
-//                            this.current_state = this.final_state;
-//                            new Error(Error.ERROR_LINE_BREAK_UNEXPECTED, this.line);
-//                        }
+                        else if (this.character == '\n' || this.character == '\r'){
+                            this.current_state = this.final_state;
+                            new Error(Error.ERROR_INVALID_SYNTAX, this.line);
+//                            this.lexical_register = new LexicalRegister();
+                        } else if (this.character == -1) {
+                            this.current_state = this.final_state;
+                            new Error(Error.ERROR_FINAL_FILE_NOT_EXPECTED, this.getLine(),
+                                    "" + ((char) this.character));
+                        }
 
                         if (debug){
                             System.out.println("Estou no caso 9");
@@ -603,9 +612,7 @@ public class LexicalAnalyzer {
 
         // TODO: 16/11/2021 debug
         if (debug){
-//            symbol_table.displaysHashTable();
-//            symbol_table.itensHashTable();
-//            System.out.println("linha: " + getLine());
+//            System.out.println(test);
         }
 
         return (this.lexical_register);
