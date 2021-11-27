@@ -22,7 +22,6 @@ public class SymbolTable {
         // 3 -> type_int
         // 4 -> type_string
         // class:
-        // -1 -> class_reserved
         // 1 -> class_empty
         // 2 -> class_var
         // 3 -> class_const
@@ -31,40 +30,40 @@ public class SymbolTable {
         this.symbol_table = new String[][]
                 {      //token, lexeme, type, class, address
                         {"1", "id", "-1", "1", ""},
-                        {"2", "const", "-1", "2", ""},
-                        {"2", "true", "1", "-1", ""},
-                        {"2", "false", "1", "-1", ""},
-                        {"3", "final", "-1", "2", ""},
-                        {"4", "int", "3", "-1", ""},
-                        {"5", "byte", "2", "-1", ""},
-                        {"6", "string", "4", "-1", ""},
-                        {"7", "while", "-1", "-1", ""},
-                        {"8", "if", "-1", "-1", ""},
-                        {"9", "else", "-1", "-1", ""},
-                        {"10", "and", "-1", "-1", ""},
-                        {"11", "or", "-1", "-1", ""},
-                        {"12", "not", "-1", "-1", ""},
-                        {"13", "==", "-1", "-1", ""},
-                        {"14", "=", "-1", "-1", ""},
-                        {"15", "(", "-1", "-1", ""},
-                        {"16", ")", "-1", "-1", ""},
-                        {"17", "<", "-1", "-1", ""},
-                        {"18", ">", "-1", "-1", ""},
-                        {"19", "<>", "-1", "-1", ""},
-                        {"20", ">=", "-1", "-1", ""},
-                        {"21", "<=", "-1", "-1", ""},
-                        {"22", ",", "-1", "-1", ""},
-                        {"23", "+", "-1", "-1", ""},
-                        {"24", "-", "-1", "-1", ""},
-                        {"25", "*", "-1", "-1", ""},
-                        {"26", "/", "-1", "-1", ""},
-                        {"27", ";", "-1", "-1", ""},
-                        {"28", "begin", "-1", "-1", ""},
-                        {"29", "end", "-1", "-1", ""},
-                        {"30", "readln", "-1", "-1", ""},
-                        {"31", "write", "-1", "-1", ""},
-                        {"32", "writeln", "-1", "-1", ""},
-                        {"33", "boolean", "1", "-1", ""},
+                        {"2", "const", "-1", "3", ""},
+                        {"2", "true", "1", "3", ""},
+                        {"2", "false", "1", "3", ""},
+                        {"3", "final", "-1", "3", ""},
+                        {"4", "int", "3", "1", ""},
+                        {"5", "byte", "2", "1", ""},
+                        {"6", "string", "4", "1", ""},
+                        {"7", "while", "-1", "1", ""},
+                        {"8", "if", "-1", "1", ""},
+                        {"9", "else", "-1", "1", ""},
+                        {"10", "and", "-1", "1", ""},
+                        {"11", "or", "-1", "1", ""},
+                        {"12", "not", "-1", "1", ""},
+                        {"13", "==", "-1", "1", ""},
+                        {"14", "=", "-1", "1", ""},
+                        {"15", "(", "-1", "1", ""},
+                        {"16", ")", "-1", "1", ""},
+                        {"17", "<", "-1", "1", ""},
+                        {"18", ">", "-1", "1", ""},
+                        {"19", "<>", "-1", "1", ""},
+                        {"20", ">=", "-1", "1", ""},
+                        {"21", "<=", "-1", "1", ""},
+                        {"22", ",", "-1", "1", ""},
+                        {"23", "+", "-1", "1", ""},
+                        {"24", "-", "-1", "1", ""},
+                        {"25", "*", "-1", "1", ""},
+                        {"26", "/", "-1", "1", ""},
+                        {"27", ";", "-1", "1", ""},
+                        {"28", "begin", "-1", "1", ""},
+                        {"29", "end", "-1", "1", ""},
+                        {"30", "readln", "-1", "1", ""},
+                        {"31", "write", "-1", "1", ""},
+                        {"32", "writeln", "-1", "1", ""},
+                        {"33", "boolean", "1", "1", ""},
                 };
         for (int i = 0; i <symbol_table.length; i++){
             this.lexical_register = new LexicalRegister(
@@ -96,17 +95,44 @@ public class SymbolTable {
         return (((LexicalRegister) hash_table.get(lexeme)).getToken());
     }
 
-    public Integer getType(String s_type){
+    // funcao chama a outra funcao caso id não seja final
+    public Integer getType(String s_type) {
+        return getType(s_type, false);
+    }
+    // is_final recebe true caso o id seja final e s_type recebe o lexema para descobrir o tipo
+    public Integer getType(String s_type, boolean is_final){
         int type = -1;
+        // -1 -> type_reserved
+        // 1 -> type_boolean
+        // 2 -> type_byte
+        // 3 -> type_int
+        // 4 -> type_string
 
-        if (s_type.equals("byte")){
+        if (s_type.equals("boolean")) {
             type = 1;
-        } else if (s_type.equals("int")){
+        } else if (s_type.equals("byte")){
             type = 2;
-        } else if (s_type.equals("boolean")) {
+        } else if (s_type.equals("int")){
             type = 3;
         } else if ((s_type.equals("string"))){
             type = 4;
+        }
+
+        if (is_final) {
+            try {
+                int temp_int = Integer.parseInt(s_type);
+                if (temp_int >= -128 && temp_int <= 127) {
+                    type = 2;
+                } else {
+                    type = 3;
+                }
+            } catch (NumberFormatException e) {
+                if (s_type.equalsIgnoreCase("true") || s_type.equalsIgnoreCase("false")) {
+                    type = 1;
+                } else {
+                    type = 4;
+                }
+            }
         }
 
         return (type);
@@ -114,6 +140,9 @@ public class SymbolTable {
 
     public Integer getClass(String s_class){
         int classs = -1;
+        // 1 -> class_empty
+        // 2 -> class_var
+        // 3 -> class_const
 
         if (s_class.equals("empty")){
             classs = 1;

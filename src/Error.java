@@ -20,6 +20,7 @@ public class Error {
     public static final String ERROR_LA_TOKEN_NOT_RECONIZED = "ERRO AL: Token nao reconhecido!";
 
     public static final String ERROR_TOKEN_NOT_EXPECTED = "ERRO AS: Token nao esperado!";
+    public static final String ERROR_IDENTIFIER_ALREADY_DECLARED = "ERRO AS: identificador ja declarado!";
     public static final String ERROR_FINAL_FILE_NOT_EXPECTED = "ERRO AS: Final de arquivo nao esperado!";
 
     public Error(){ }

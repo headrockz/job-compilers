@@ -20,7 +20,7 @@ public class LexicalAnalyzer {
 
         line = 1;
         this.valid_character = new char[] {' ', '_', '.', ',', ';', ':', '(', ')', '/',
-                '*', '+', '>', '<', '=', '\n', '{', '}', '\r', '"', '\0', '\t', '@', '?',
+                '*', '+', '>', '<', '=', '\n', '{', '}', '\r', '"', '-', '\0', '\t', '@', '?',
                 '!', '|', '\u0000', '\uFFFF', '\uffff', '\\'};
 
     }
@@ -108,17 +108,20 @@ public class LexicalAnalyzer {
                         else if (this.character == '{'){
                             this.current_state = 13;
                         }
-                        //  ( ) + - * ; , :
+                        //  ( ) + - * ; ,
                         else if (this.character == '(' || this.character == ')' || this.character == '+' ||
-                                this.character == '-' || this.character == ';' || this.character == ',') {
+                                this.character == '-' || this.character == '*' ||
+                                this.character == ';' || this.character == ',') {
                             this.lexeme = "" + ((char) this.character);
                             this.lexical_register = symbol_table.searchSymbol(this.lexeme);
 
                             if(this.lexical_register == null){
                                 this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
                                         new LexicalRegister(this.symbol_table.getToken("id"), this.lexeme));
-                                this.current_state = 0;
+                                this.current_state = this.final_state;
                             }
+
+                            System.out.println("lexema: " + this.lexeme);
                         }
                         // EOF
                         else if (this.character == -1){
@@ -159,35 +162,22 @@ public class LexicalAnalyzer {
 
                         if (debug){
                             System.out.println("Estou no caso 1");
+                            System.out.println("lexema: " + this.lexeme);
                         }
 
                         break;
                     // digito 1-9
                     case 2:
-                        System.out.println("");
-
                         if (Character.isDigit(this.character)){
                             this.lexeme += (char) this.character;
                             this.size_lexeme++;
                             this.current_state = 2;
 
-                        } else if (this.character != '\n' && this.character != '\r' &&
-                                this.character != ' ' && this.character != -1){
+                        } else if (this.character != '\n' && this.character != '\r' && this.character != -1){
                             this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
                             if (this.lexical_register == null) {
-
-                                int type= 0;
-                                int classs = 3;
-
-                                if (Integer.parseInt(this.lexeme) >= -128 && Integer.parseInt(this.lexeme) <= 127) {
-                                    type = 2;
-                                } else {
-                                    type = 3;
-                                }
-
                                 this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
-                                        new LexicalRegister(this.symbol_table.getToken("const"), this.lexeme,
-                                                type, classs));
+                                        new LexicalRegister(this.symbol_table.getToken("const"), this.lexeme));
                             }
                             this.io_file.giveBack(-1);
                             this.current_state = this.final_state;
@@ -209,8 +199,6 @@ public class LexicalAnalyzer {
                         break;
                     //digito comecando de 0
                     case 3:
-                        System.out.println("");
-
                         if (Character.isDigit(this.character)){ //decimal
                             this.lexeme = String.valueOf((char) this.character);
                             this.size_lexeme = 1;
@@ -224,17 +212,14 @@ public class LexicalAnalyzer {
                             new Error(Error.ERROR_INVALID_SYNTAX, this.line);
                         } else if (this.character != '\n' || this.character != '\r' || this.character != -1){
                             this.lexical_register = this.symbol_table.searchSymbol(this.lexeme);
+
                             if (this.lexical_register == null) {
-
-                                int type = 2;
-                                int classs = 3;
-
                                 this.lexical_register = this.symbol_table.insertSymbol(this.lexeme,
-                                        new LexicalRegister(this.symbol_table.getToken("const"), this.lexeme,
-                                                type, classs));
+                                        new LexicalRegister(this.symbol_table.getToken("const"), this.lexeme));
                             }
+
                             this.io_file.giveBack(-1);
-                            this.current_state = 0;
+                            this.current_state = this.final_state;
                         } else if (this.character == '\n' || this.character == '\r'){
                             this.current_state = this.final_state;
                             new Error(Error.ERROR_INVALID_SYNTAX, this.line);
@@ -309,7 +294,6 @@ public class LexicalAnalyzer {
                         break;
                     // string entre " "
                     case 6:
-                        System.out.println("");
                         if (this.size_lexeme <= 255) {
                             if (this.character != '"' && this.character != '\n' &&
                                     this.character != '\r' && this.character != -1) {

@@ -7,7 +7,7 @@ public class LC {
         if (new IOFile().checkOpenFile("tests/commens.l")){
             new Error (Error.ERROR_FILE_NOT_FOUND);
         } else {
-            new Compiler("exemplo.l", "exemplo.asm");
+            new Compiler("tests/numbers.l", "exemplo.asm");
             System.out.println("Fim normal da execução");
         }
     }
