@@ -1,3 +1,10 @@
+/*
+    * Link: https://github.com/headrockz/job-compilers
+    * Grupo:
+    * Asafe Felipe - E00731
+    * Yasmim Lopes - E00790
+    * Leonardo Akio - E00905
+ */
 public class LC {
 //    private Error error;
 //    private Compiler compiler;
