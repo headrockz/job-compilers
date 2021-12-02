@@ -12,12 +12,15 @@ public class Error {
     public static final String ERROR_LEXEME_NOT_FOUND = "ERRO: Lexema nao identificado!";
     public static final String HASH_EMPTY = "ERRO: Hash vazia!";
     public static final String ERROR_ZERO_DIVISION = "ERRO: Nao existe divisao por 0!";
+    public static final String ERROR_CODE_ASSEMBLER_EMPTY = "ERRO: Assembler vazio!";
+    public static final String ERROR_WRITING_FILE = "ERRO: escrita do arquivo!";
 
     public static final String ERROR_INVALID_SYNTAX = "ERRO AL: sintaxe invalida!";
     public static final String ERROR_LINE_BREAK_UNEXPECTED = "ERRO AL: Quebra de linha nao esperada!";
     public static final String ERROR_STRING_SIZE_EXCEEDED = "ERRO AL: Tamanho da String excedido!";
     public static final String ERROR_HEXADECIMAL_SIZE_EXCEEDED = "ERRO AL: Tamanho do hexadecimal excedido!";
     public static final String ERROR_LA_TOKEN_NOT_RECONIZED = "ERRO AL: Token nao reconhecido!";
+
 
     public static final String ERROR_TOKEN_NOT_EXPECTED = "ERRO AS: Token nao esperado!";
     public static final String ERROR_IDENTIFIER_ALREADY_DECLARED = "ERRO AS: identificador ja declarado!";
@@ -27,7 +30,7 @@ public class Error {
 
     public Error(String message){
         this.massage = message;
-//        System.out.print(this.massage);
+        System.out.print(this.massage);
         System.exit(0);
     }
 

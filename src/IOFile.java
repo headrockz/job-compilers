@@ -93,6 +93,18 @@ public class IOFile {
         }
     }
 
+    public void saveAssembler(String code_generator) {
+        try {
+            if(code_generator.length() > 0){
+                this.output_file.writeBytes(code_generator);
+            } else {
+                new Error(Error.ERROR_CODE_ASSEMBLER_EMPTY);
+            }
+        } catch (IOException e){
+            new Error(Error.ERROR_WRITING_FILE);
+        }
+    }
+
     @Override
     public String toString(){
         return ("Arquivo de entrada : " + this.input_file + "\n" +

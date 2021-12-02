@@ -11,10 +11,10 @@ public class LC {
 
     public static void main(String[] args) {
 
-        if (new IOFile().checkOpenFile("tests/commens.l")){
+        if (!new IOFile().checkOpenFile("exemplo.l")){
             new Error (Error.ERROR_FILE_NOT_FOUND);
         } else {
-            new Compiler("tests/numbers.l", "exemplo.asm");
+            new Compiler("exemplo.l", "exemplo.asm");
             System.out.println("Fim normal da execução");
         }
     }
